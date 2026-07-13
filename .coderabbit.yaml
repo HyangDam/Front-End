@@ -1,0 +1,16 @@
+# CodeRabbit 설정 — https://docs.coderabbit.ai/reference/configuration
+# 적용하려면 GitHub Marketplace에서 CodeRabbit 앱을 이 레포에 설치해야 합니다.
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+  high_level_summary: true
+  request_changes_workflow: false
+  auto_review:
+    enabled: true
+    base_branches:
+      - "dev"
+      - "main"
+
+chat:
+  auto_reply: true
