@@ -99,9 +99,9 @@ Front-End/
 
 > **FE-A / FE-B는 폴더 구조가 아니라 작업 분담 가이드입니다.** 코드는 항상 페이지(라우트) 단위로 colocate하고, 폴더 이름에 담당자 트랙(`fe-a`/`fe-b`)을 넣지 않습니다. 기능 명세서 기준 작업 분담 참고용 매핑:
 >
-> | 트랙 | 담당 라우트 |
-> | --- | --- |
-> | FE-A (인증·온보딩·AI) | `login`, `onboarding/*`, `loading`, `(tabs)/ai` |
+> | 트랙                           | 담당 라우트                                                                  |
+> | ------------------------------ | ---------------------------------------------------------------------------- |
+> | FE-A (인증·온보딩·AI)          | `login`, `onboarding/*`, `loading`, `(tabs)/ai`                              |
 > | FE-B (홈·검색·상세·마이페이지) | `(tabs)/home`, `(tabs)/search`, `(tabs)/mypage`, `perfumes/[id]`, `settings` |
 
 ### Colocation 배치 (한 단계씩 레벨업)
@@ -316,19 +316,23 @@ import { formatPrice } from "./utils";
 ### PR 컨벤션
 
 - base 브랜치: `dev` (`main` 아님)
-- 템플릿:
+- 템플릿 (`.github/PULL_REQUEST_TEMPLATE.md`, PR 생성 시 자동 삽입):
 
 ```
-## 작업 내용
+## 작업 요약
 
-[내용 정리]
+해당 PR에서 작업한 내용을 정리해주세요. Slack 요약에는 1단계 불릿만 반영됩니다. 예) - 로그인 API를 연동합니다
+
+## 작업 세부 내용
 
 ## 스크린샷
 
 ## 연관 이슈
 
-closes #이슈번호
+이 PR과 연관된 이슈 번호를 작성하세요. 예) closes #10
 ```
+
+- PR 제목/브랜치명에 `feat`/`fix`/`refactor`/`chore`/`docs`/`style`이 포함되면 `.github/workflows/auto-label.yml`(Renato66/auto-label 사용, 설정: `.github/auto-label.yml`)이 자동으로 라벨을 붙입니다. 이슈 제목에도 동일하게 적용됩니다.
 
 ### 코드 리뷰 — PN 룰
 

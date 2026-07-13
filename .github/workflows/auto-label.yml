@@ -1,0 +1,20 @@
+name: Auto Label
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+  issues:
+    types: [opened, edited]
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: Renato66/auto-label@v3
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          config-path: ".github/auto-label.yml"
