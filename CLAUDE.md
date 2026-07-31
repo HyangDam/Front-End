@@ -334,7 +334,7 @@ import { formatPrice } from "./utils";
 이 PR과 연관된 이슈 번호를 작성하세요. 예) closes #10
 ```
 
-- PR 제목/브랜치명에 `feat`/`fix`/`refactor`/`chore`/`docs`/`style`이 포함되면 `.github/workflows/auto-label.yml`(Renato66/auto-label 사용, 설정: `.github/auto-label.yml`)이 자동으로 라벨을 붙입니다. 이슈 제목에도 동일하게 적용됩니다.
+- PR 제목/브랜치명에 `feat`/`fix`/`refactor`/`chore`/`docs`/`style`이 포함되면 `.github/workflows/auto-label.yml`(`actions/github-script` 기반 인라인 스크립트)이 자동으로 라벨을 붙입니다. 이슈 제목에도 동일하게 적용됩니다.
 
 ### 코드 리뷰 — PN 룰
 
