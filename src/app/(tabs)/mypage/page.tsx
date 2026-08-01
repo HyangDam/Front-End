@@ -20,10 +20,10 @@ export default function MyPage() {
         </Link>
       </header>
 
-      <div className="pt-4">
+      <main className="pt-4">
         <ProfileSummary />
         <MypageContent />
-      </div>
+      </main>
     </div>
   );
 }

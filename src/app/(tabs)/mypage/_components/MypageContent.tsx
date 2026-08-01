@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { useAppStore } from "@/hooks/useAppStore";
 import { PERFUMES } from "@/mocks/perfume";
+import type { PerfumeT } from "@/types/perfume";
 
 import LikedPerfumeRow from "./LikedPerfumeRow";
 import PerfumeShelf3D from "./PerfumeShelf3D";
@@ -14,6 +15,26 @@ const MYPAGE_TABS: { id: MypageTab; label: string }[] = [
   { id: "shelf", label: "나의 향수 저장소" },
   { id: "liked", label: "좋아요" },
 ];
+
+const renderTabContent = (
+  tab: MypageTab,
+  likedPerfumes: PerfumeT[],
+  onUnlike: (id: number) => void,
+) => {
+  if (tab === "shelf") return <PerfumeShelf3D />;
+
+  if (likedPerfumes.length === 0) {
+    return (
+      <p className="py-12 text-center font-sans text-[13px] text-muted">
+        좋아요한 향수가 없어요
+      </p>
+    );
+  }
+
+  return likedPerfumes.map((perfume) => (
+    <LikedPerfumeRow key={perfume.id} perfume={perfume} onUnlike={onUnlike} />
+  ));
+};
 
 function MypageContent() {
   const [tab, setTab] = useState<MypageTab>("shelf");
@@ -65,19 +86,7 @@ function MypageContent() {
         ))}
       </div>
 
-      <div className="pt-4">
-        {tab === "shelf" ? (
-          <PerfumeShelf3D />
-        ) : likedPerfumes.length === 0 ? (
-          <p className="py-12 text-center font-sans text-[13px] text-muted">
-            좋아요한 향수가 없어요
-          </p>
-        ) : (
-          likedPerfumes.map((perfume) => (
-            <LikedPerfumeRow key={perfume.id} perfume={perfume} onUnlike={toggleLike} />
-          ))
-        )}
-      </div>
+      <div className="pt-4">{renderTabContent(tab, likedPerfumes, toggleLike)}</div>
     </div>
   );
 }
