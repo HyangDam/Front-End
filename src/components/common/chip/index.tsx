@@ -12,6 +12,7 @@ function Chip({ label, selected = false, onClick, size = "md" }: ChipProps) {
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={selected}
       className={`cursor-pointer whitespace-nowrap rounded-full font-sans transition-colors ${
         size === "sm" ? "px-[11px] py-1 text-[11px]" : "px-3.5 py-[7px] text-xs"
       } ${

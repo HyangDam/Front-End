@@ -20,12 +20,14 @@ function OnboardSearchField({ value, onChange, placeholder }: OnboardSearchField
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        aria-label={placeholder}
         className="flex-1 border-0 bg-transparent font-sans text-[13px] text-charcoal outline-none placeholder:text-muted-light"
       />
       {value && (
         <button
           type="button"
           onClick={() => onChange("")}
+          aria-label="검색어 지우기"
           className="cursor-pointer text-base text-muted"
         >
           ×

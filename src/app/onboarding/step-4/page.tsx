@@ -34,6 +34,7 @@ export default function OnboardStep4Page() {
               key={label}
               type="button"
               onClick={() => toggleScent(label)}
+              aria-pressed={selected}
               className={`flex cursor-pointer items-center gap-2 rounded-[14px] px-3 py-3.5 font-sans text-[13px] transition-colors ${
                 selected
                   ? "border-[1.5px] border-rose bg-rose font-semibold text-white"

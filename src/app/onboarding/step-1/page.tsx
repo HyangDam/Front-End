@@ -17,6 +17,8 @@ export default function OnboardStep1Page() {
     router.push("/onboarding/step-2");
   };
 
+  const isAgeValid = Number.isInteger(Number(age)) && Number(age) > 0;
+
   return (
     <OnboardShell
       step={0}
@@ -25,7 +27,7 @@ export default function OnboardStep1Page() {
       title={"나이와 성별을\n입력해주세요"}
       backHref="/login"
       onNext={handleNext}
-      nextDisabled={!gender || !age}
+      nextDisabled={!gender || !isAgeValid}
     >
       <div className="mb-8">
         <p className="mb-3.5 font-sans text-[11px] tracking-[0.5px] text-muted">성별</p>
