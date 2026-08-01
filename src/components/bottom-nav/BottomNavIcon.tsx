@@ -1,7 +1,7 @@
-import type { BottomNavTabId } from "./bottomNav.const";
+import type { BottomNavTabIdT } from "./bottomNav.const";
 
 type BottomNavIconProps = {
-  tabId: BottomNavTabId;
+  tabId: BottomNavTabIdT;
   active: boolean;
 };
 
