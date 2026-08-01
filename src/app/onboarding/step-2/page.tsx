@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import Chip from "@/components/common/chip";
+import Chip from "@/components/chip";
 
 import OnboardSearchField from "../_common/_components/OnboardSearchField";
 import OnboardShell from "../_common/_components/OnboardShell";

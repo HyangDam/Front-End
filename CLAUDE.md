@@ -77,12 +77,11 @@ Front-End/
 │   │       ├── page.tsx
 │   │       └── _components/
 │   │
-│   ├── components/
-│   │   └── common/                 # 2개 이상 top-level 라우트에서 공유되는 범용 UI
-│   │       ├── perfume-card/       # 홈·검색·AI 채팅에서 공유
-│   │       ├── chip/
-│   │       ├── pill-btn/
-│   │       └── bottom-nav/         # kebab-case 폴더, index.tsx 본체
+│   ├── components/                 # 2개 이상 top-level 라우트에서 공유되는 범용 UI
+│   │   ├── perfume-card/           # 홈·검색·AI 채팅에서 공유
+│   │   ├── chip/
+│   │   ├── pill-btn/
+│   │   └── bottom-nav/             # kebab-case 폴더, index.tsx 본체
 │   │
 │   ├── apis/                       # 2개 이상 페이지에서 공유하는 API 함수
 │   ├── hooks/                      # 공통 커스텀 훅 (useAppStore 등 Zustand 스토어 포함)
@@ -108,22 +107,23 @@ Front-End/
 
 ### Colocation 배치 (한 단계씩 레벨업)
 
-코드는 가장 가까운 사용처에 둔다. 재사용 범위가 넓어질 때만 부모로 한 단계 끌어올린다. 처음부터 `components/common/`에 두지 않는다.
+코드는 가장 가까운 사용처에 둔다. 재사용 범위가 넓어질 때만 부모로 한 단계 끌어올린다. 처음부터 `components/`에 두지 않는다.
 
 | 재사용 범위                                         | 배치 위치                                                                           |
 | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | 단일 `page.tsx` 전용                                | 해당 라우트 폴더의 `_components/` (또는 `_hooks/`, `_apis/`, `_consts/`, `_types/`) |
 | 같은 부모 아래 2개 이상 하위 라우트에서 공유        | 부모 라우트의 `_common/_components/` 등으로 끌어올림                                |
-| `app/` top-level 라우트 간 공유 (예: home ↔ search) | `components/common/{component-name}/` — App Router 밖으로 이동                      |
+| `app/` top-level 라우트 간 공유 (예: home ↔ search) | `components/{component-name}/` — App Router 밖으로 이동                             |
 | 2개 이상 라우트 또는 앱 전역에서 쓰는 API/훅/유틸   | `src/apis/`, `hooks/`, `utils/`, `types/`                                           |
 
 - 한 라우트 전용 → `_components/` 등을 라우트 폴더에 직접 둔다
 - `app/` 내부 레벨업(형제 라우트 간 공유) → 부모에 `_common/`을 만들고 그 안에 `_components/`, `_hooks/`, `_consts/`, `_types/` 배치
-- top-level 라우트를 넘나들면 `_common/`을 더 쌓지 않고 `src/components/common/`(또는 `hooks/`, `utils/` 등)으로 이동
+- top-level 라우트를 넘나들면 `_common/`을 더 쌓지 않고 `src/components/`(또는 `hooks/`, `utils/` 등)으로 이동
 - `app/_common/`, `app/_components/` ❌ — top-level 간 공유는 App Router 밖에서 관리
+- `components/common/` ❌ — `components/` 자체가 이미 공유 전용 폴더라 `common/`으로 한 번 더 감쌀 필요 없음. 각 컴포넌트가 `components/{component-name}/`으로 바로 옴. 이름 붙이기 애매한 것만 생기면 그때 `components/common/`을 예외적으로 고려
 - 필요한 폴더만 생성 — 빈 폴더는 만들지 않음
 
-`components/common/` 내부 파일명:
+`components/` 내부 파일명:
 
 | 파일 종류     | 규칙                         | 예시                     |
 | ------------- | ---------------------------- | ------------------------ |
@@ -134,12 +134,13 @@ Front-End/
 
 ```ts
 // ✅ Good
-import PerfumeCard from "@/components/common/perfume-card";
-import BottomNav from "@/components/common/bottom-nav";
+import PerfumeCard from "@/components/perfume-card";
+import BottomNav from "@/components/bottom-nav";
 
-// ❌ Bad — common 바로 아래 파일, PascalCase 폴더, 중복 경로
-import PerfumeCard from "@/components/common/PerfumeCard";
-import PerfumeCard from "@/components/common/PerfumeCard/PerfumeCard";
+// ❌ Bad — PascalCase 폴더, 중복 경로, 불필요한 common 중첩
+import PerfumeCard from "@/components/PerfumeCard";
+import PerfumeCard from "@/components/PerfumeCard/PerfumeCard";
+import PerfumeCard from "@/components/common/perfume-card";
 ```
 
 ### Path Alias
@@ -151,7 +152,7 @@ import PerfumeCard from "@/components/common/PerfumeCard/PerfumeCard";
 | 대상                 | 규칙                            | 예시                                                   |
 | -------------------- | ------------------------------- | ------------------------------------------------------ |
 | 폴더                 | kebab-case                      | `perfume-card/`, `bottom-nav/`                         |
-| 공통 컴포넌트 본체   | `index.tsx`                     | `components/common/perfume-card/index.tsx`             |
+| 공통 컴포넌트 본체   | `index.tsx`                     | `components/perfume-card/index.tsx`                    |
 | 보조 컴포넌트 파일   | PascalCase                      | `EditorialBottle.tsx`, `ThinkingDots.tsx`              |
 | 스타일/상수 파일     | camelCase                       | `perfumeCard.style.ts`, `onboarding.const.ts`          |
 | 일반 파일 (훅, 유틸) | camelCase                       | `useAppStore.ts`, `formatPrice.ts`                     |

@@ -1,4 +1,4 @@
-import BottomNav from "@/components/common/bottom-nav";
+import BottomNav from "@/components/bottom-nav";
 
 export default function TabsLayout({
   children,

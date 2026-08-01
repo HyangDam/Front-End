@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import PerfumeCard from "@/components/common/perfume-card";
+import PerfumeCard from "@/components/perfume-card";
 
 import AiPerfumerCta from "./_components/AiPerfumerCta";
 import ArticleHero from "./_components/ArticleHero";
