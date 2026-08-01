@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${notoSerifKr.variable} ${plusJakartaSans.variable} h-full`}
+      className={`${notoSerifKr.variable} ${plusJakartaSans.variable} h-full bg-white`}
     >
       <body className="mx-auto flex h-full min-h-screen w-full max-w-md flex-col overflow-hidden bg-ivory">
         {children}
