@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import Chip from "@/components/common/chip";
+import Chip from "@/components/chip";
 
 import OnboardShell from "../_common/_components/OnboardShell";
 import { useOnboardingStore } from "../_common/_hooks/useOnboardingStore";

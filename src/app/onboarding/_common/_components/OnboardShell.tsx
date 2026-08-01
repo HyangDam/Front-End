@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import PillBtn from "@/components/common/pill-btn";
+import PillBtn from "@/components/pill-btn";
 
 import ProgressDots from "./ProgressDots";
 
