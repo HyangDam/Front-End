@@ -25,7 +25,7 @@ export default function AiPage() {
   }, [messages, isThinking]);
 
   const handleSend = (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || isThinking) return;
     setMessages((prev) => [...prev, { role: "user", text }]);
     setInput("");
     setIsThinking(true);
@@ -48,7 +48,12 @@ export default function AiPage() {
 
       {messages.length === 1 && !isThinking && <QuickPrompts onSelect={handleSend} />}
 
-      <ChatInput value={input} onChange={setInput} onSend={() => handleSend(input)} />
+      <ChatInput
+        value={input}
+        onChange={setInput}
+        onSend={() => handleSend(input)}
+        disabled={isThinking}
+      />
     </div>
   );
 }

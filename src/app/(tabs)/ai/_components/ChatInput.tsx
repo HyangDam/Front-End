@@ -8,13 +8,14 @@ type ChatInputProps = {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
+  disabled?: boolean;
 };
 
-function ChatInput({ value, onChange, onSend }: ChatInputProps) {
-  const canSend = value.trim().length > 0;
+function ChatInput({ value, onChange, onSend, disabled = false }: ChatInputProps) {
+  const canSend = value.trim().length > 0 && !disabled;
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") onSend();
+    if (e.key === "Enter" && !e.nativeEvent.isComposing) onSend();
   };
 
   return (
@@ -24,6 +25,7 @@ function ChatInput({ value, onChange, onSend }: ChatInputProps) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
+          disabled={disabled}
           placeholder="조향사에게 물어보기..."
           aria-label="조향사에게 물어보기"
           className="flex-1 border-0 bg-transparent font-sans text-[13px] text-charcoal outline-none"
