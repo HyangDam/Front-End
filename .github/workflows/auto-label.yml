@@ -1,0 +1,45 @@
+name: Auto Label
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+  issues:
+    types: [opened, edited]
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const LABEL_RULES = [
+              { label: "feature", pattern: /feat/i },
+              { label: "fix", pattern: /fix/i },
+              { label: "refactor", pattern: /refactor/i },
+              { label: "chore", pattern: /chore/i },
+              { label: "docs", pattern: /docs/i },
+              { label: "style", pattern: /style/i },
+            ];
+
+            const isPullRequest = Boolean(context.payload.pull_request);
+            const target = context.payload.pull_request ?? context.payload.issue;
+            const title = target.title ?? "";
+            const branch = isPullRequest ? target.head.ref : "";
+
+            const labels = LABEL_RULES.filter(
+              ({ pattern }) => pattern.test(title) || pattern.test(branch),
+            ).map(({ label }) => label);
+
+            if (labels.length === 0) return;
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: target.number,
+              labels,
+            });
