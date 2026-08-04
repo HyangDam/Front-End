@@ -8,7 +8,7 @@ import FamilyBadges from "./_components/FamilyBadges";
 import NoteSection from "./_components/NoteSection";
 import ReviewList from "./_components/ReviewList";
 import StatsActionRow from "./_components/StatsActionRow";
-import { getPerfumeDetail, PERFUME_REVIEWS } from "./_consts/perfumeDetails.const";
+import { getPerfumeDetail, getPerfumeReviews } from "./_consts/perfumeDetails.const";
 
 type PerfumeDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -52,7 +52,7 @@ export default async function PerfumeDetailPage({ params }: PerfumeDetailPagePro
           <NoteSection label="BASE NOTES" notes={perfume.baseNotes} />
         </div>
 
-        <ReviewList reviews={PERFUME_REVIEWS} />
+        <ReviewList reviews={getPerfumeReviews(perfume.id)} />
       </div>
 
       <DetailActionBar perfumeId={perfume.id} />

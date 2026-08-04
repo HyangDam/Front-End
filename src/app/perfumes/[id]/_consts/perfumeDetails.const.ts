@@ -135,18 +135,59 @@ const PERFUME_DETAIL_EXTRA: Record<number, PerfumeDetailExtraT> = {
   },
 };
 
-export const PERFUME_REVIEWS: PerfumeReviewT[] = [
-  {
-    user: "향수덕후_민지",
-    text: "정말 향이 오래가고 은은해서 매일 뿌리고 싶어요",
-    rating: 5,
-  },
-  {
-    user: "perfume_영지",
-    text: "처음엔 강했지만 마르면 부드럽고 우아해져요",
-    rating: 4,
-  },
-];
+const PERFUME_REVIEWS: Record<number, PerfumeReviewT[]> = {
+  1: [
+    {
+      user: "향수덕후_민지",
+      text: "샌달우드 향이 정말 오래가고 은은해서 매일 뿌리고 싶어요",
+      rating: 5,
+    },
+    {
+      user: "perfume_영지",
+      text: "처음엔 스파이시하게 느껴졌지만 마르면 부드러운 우디향으로 변해요",
+      rating: 4,
+    },
+  ],
+  2: [
+    {
+      user: "flower_수민",
+      text: "작약향이 화사하게 퍼져서 봄에 뿌리기 딱 좋아요",
+      rating: 5,
+    },
+    {
+      user: "다올",
+      text: "가볍고 상큼해서 데일리로 쓰기 좋은데 지속력은 조금 아쉬워요",
+      rating: 4,
+    },
+  ],
+  3: [
+    {
+      user: "citrus_하은",
+      text: "자몽향으로 시작해서 은은한 자스민으로 마무리되는 게 세련됐어요",
+      rating: 5,
+    },
+    {
+      user: "향수초보",
+      text: "회사에서 뿌리기 부담스럽지 않은 딱 적당한 향이에요",
+      rating: 5,
+    },
+  ],
+  4: [
+    {
+      user: "rose_지연",
+      text: "장미향이 진하지 않고 우아해서 선물로도 좋았어요",
+      rating: 5,
+    },
+    {
+      user: "perfume_은서",
+      text: "리치향이 상큼하게 열리는 느낌이라 첫인상이 좋아요",
+      rating: 4,
+    },
+  ],
+};
+
+export const getPerfumeReviews = (id: number): PerfumeReviewT[] =>
+  PERFUME_REVIEWS[id] ?? [];
 
 export const getPerfumeDetail = (id: number): PerfumeDetailT | undefined => {
   const base = PERFUMES.find((perfume) => perfume.id === id);
