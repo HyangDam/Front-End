@@ -5,6 +5,7 @@ export const SEARCH_FAMILY_FILTERS = [
   "시트러스",
   "오리엔탈",
   "머스크",
+  "스파이시",
 ] as const;
 
 export type SearchFamilyFilterT = (typeof SEARCH_FAMILY_FILTERS)[number];
