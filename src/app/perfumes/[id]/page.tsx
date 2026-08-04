@@ -23,11 +23,11 @@ export default async function PerfumeDetailPage({ params }: PerfumeDetailPagePro
     <div className="flex h-full flex-col bg-paper">
       <DetailHeader />
 
-      <div className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto">
         <div className="border-b border-border px-[22px] py-4">
-          <div className="mb-1 text-center font-serif text-xl text-charcoal">
+          <h1 className="mb-1 text-center font-serif text-xl text-charcoal">
             {perfume.name}
-          </div>
+          </h1>
           <div className="text-center font-mono text-[11px] tracking-[1.5px] text-muted">
             {perfume.brand}
           </div>
@@ -50,7 +50,7 @@ export default async function PerfumeDetailPage({ params }: PerfumeDetailPagePro
           <NoteSection label="MIDDLE NOTES" notes={perfume.middleNotes} />
           <NoteSection label="BASE NOTES" notes={perfume.baseNotes} />
         </div>
-      </div>
+      </main>
 
       <DetailActionBar perfumeId={perfume.id} />
     </div>
