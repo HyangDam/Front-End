@@ -5,6 +5,7 @@ export type PerfumeT = {
   brandKr: string;
   price: string;
   img?: string;
+  familyNames?: string[];
 };
 
 export type PerfumeFamilyT = {
