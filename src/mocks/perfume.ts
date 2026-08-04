@@ -9,6 +9,9 @@ export const PERFUMES: PerfumeT[] = [
     brandKr: "르 라보",
     price: "₩420,000",
     img: "https://fimgs.net/mdimg/perfume/375x500.30551.jpg",
+    familyNames: ["우디", "머스크", "스파이시"],
+    popularity: 92,
+    releasedAt: "2011-05-01",
   },
   {
     id: 2,
@@ -17,6 +20,9 @@ export const PERFUMES: PerfumeT[] = [
     brandKr: "디올",
     price: "₩195,000",
     img: "https://fimgs.net/mdimg/perfume/375x500.12207.jpg",
+    familyNames: ["플로럴"],
+    popularity: 78,
+    releasedAt: "2014-02-01",
   },
   {
     id: 3,
@@ -25,6 +31,9 @@ export const PERFUMES: PerfumeT[] = [
     brandKr: "샤넬",
     price: "₩260,000",
     img: "https://fimgs.net/mdimg/perfume/375x500.18188.jpg",
+    familyNames: ["플로럴", "시트러스", "머스크"],
+    popularity: 88,
+    releasedAt: "2019-08-01",
   },
   {
     id: 4,
@@ -33,5 +42,8 @@ export const PERFUMES: PerfumeT[] = [
     brandKr: "딥티크",
     price: "₩175,000",
     img: "https://fimgs.net/mdimg/perfume/375x500.22388.jpg",
+    familyNames: ["플로럴", "우디"],
+    popularity: 70,
+    releasedAt: "2023-11-01",
   },
 ];
