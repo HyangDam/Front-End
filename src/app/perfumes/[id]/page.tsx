@@ -6,9 +6,8 @@ import DetailHeader from "./_components/DetailHeader";
 import DetailHeroImage from "./_components/DetailHeroImage";
 import FamilyBadges from "./_components/FamilyBadges";
 import NoteSection from "./_components/NoteSection";
-import ReviewList from "./_components/ReviewList";
 import StatsActionRow from "./_components/StatsActionRow";
-import { getPerfumeDetail, getPerfumeReviews } from "./_consts/perfumeDetails.const";
+import { getPerfumeDetail } from "./_consts/perfumeDetails.const";
 
 type PerfumeDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -46,13 +45,11 @@ export default async function PerfumeDetailPage({ params }: PerfumeDetailPagePro
 
         <AccordBars accords={perfume.accords} />
 
-        <div className="flex flex-col gap-5 px-[22px] py-4">
+        <div className="flex flex-col gap-5 px-[22px] pb-[100px] pt-4">
           <NoteSection label="TOP NOTES" notes={perfume.topNotes} />
           <NoteSection label="MIDDLE NOTES" notes={perfume.middleNotes} />
           <NoteSection label="BASE NOTES" notes={perfume.baseNotes} />
         </div>
-
-        <ReviewList reviews={getPerfumeReviews(perfume.id)} />
       </div>
 
       <DetailActionBar perfumeId={perfume.id} />
