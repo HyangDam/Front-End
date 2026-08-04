@@ -13,12 +13,16 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
   const isLiked = likes.includes(perfumeId);
   const isOwned = owned.includes(perfumeId);
 
+  const handleToggleOwned = () => toggleOwned(perfumeId);
+  const handleToggleLike = () => toggleLike(perfumeId);
+
   return (
     <div className="border-b border-border px-[22px] py-3.5">
       <div className="mb-4 flex items-center justify-center gap-5">
         <button
           type="button"
-          onClick={() => toggleOwned(perfumeId)}
+          onClick={handleToggleOwned}
+          aria-pressed={isOwned}
           className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -49,7 +53,8 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
         <div className="h-4 w-px bg-border" />
         <button
           type="button"
-          onClick={() => toggleLike(perfumeId)}
+          onClick={handleToggleLike}
+          aria-pressed={isLiked}
           className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent"
         >
           <svg
@@ -72,13 +77,17 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
       <div className="flex gap-2.5">
         <button
           type="button"
-          className="flex-1 cursor-pointer rounded-[22px] border border-border-dark bg-transparent py-2.5 font-sans text-[13px] text-charcoal"
+          disabled
+          title="준비 중인 기능이에요"
+          className="flex-1 cursor-not-allowed rounded-[22px] border border-border bg-transparent py-2.5 font-sans text-[13px] text-muted-light"
         >
           가격 비교
         </button>
         <button
           type="button"
-          className="flex-1 cursor-pointer rounded-[22px] border border-border-dark bg-transparent py-2.5 font-sans text-[13px] text-charcoal"
+          disabled
+          title="준비 중인 기능이에요"
+          className="flex-1 cursor-not-allowed rounded-[22px] border border-border bg-transparent py-2.5 font-sans text-[13px] text-muted-light"
         >
           매장 위치
         </button>
