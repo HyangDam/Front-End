@@ -41,6 +41,7 @@ function PerfumeCard({
   const showLikeButton = Boolean(onLike) && variant !== "hscroll";
 
   const handleLikeClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     e.stopPropagation();
     onLike?.(perfume.id);
   };
