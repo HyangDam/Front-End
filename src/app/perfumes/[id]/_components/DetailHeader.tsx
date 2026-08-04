@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 function DetailHeader() {
   const router = useRouter();
 
+  const handleBack = () => router.back();
+
   return (
     <header className="sticky top-0 z-10 flex h-11 flex-shrink-0 items-center justify-between border-b border-border bg-paper px-4">
       <button
         type="button"
-        onClick={() => router.back()}
+        onClick={handleBack}
         className="cursor-pointer border-none bg-transparent py-1 pr-2"
         aria-label="뒤로가기"
       >

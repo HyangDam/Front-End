@@ -6,6 +6,8 @@ export type PerfumeT = {
   price: string;
   img?: string;
   familyNames?: string[];
+  popularity?: number;
+  releasedAt?: string;
 };
 
 export type PerfumeFamilyT = {

@@ -11,12 +11,16 @@ function DetailActionBar({ perfumeId }: DetailActionBarProps) {
   const isLiked = likes.includes(perfumeId);
   const isOwned = owned.includes(perfumeId);
 
+  const handleToggleLike = () => toggleLike(perfumeId);
+  const handleToggleOwned = () => toggleOwned(perfumeId);
+
   return (
     <div className="flex flex-shrink-0 gap-2.5 border-t border-border bg-paper px-4 py-[18px]">
       <button
         type="button"
-        onClick={() => toggleLike(perfumeId)}
+        onClick={handleToggleLike}
         aria-label="좋아요"
+        aria-pressed={isLiked}
         className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border ${
           isLiked ? "border-rose bg-rose-light" : "border-border bg-transparent"
         }`}
@@ -34,7 +38,8 @@ function DetailActionBar({ perfumeId }: DetailActionBarProps) {
       </button>
       <button
         type="button"
-        onClick={() => toggleOwned(perfumeId)}
+        onClick={handleToggleOwned}
+        aria-pressed={isOwned}
         className={`h-[46px] flex-1 cursor-pointer rounded-[23px] font-sans text-[13px] font-semibold ${
           isOwned
             ? "border border-border bg-ivory-200 text-muted"
