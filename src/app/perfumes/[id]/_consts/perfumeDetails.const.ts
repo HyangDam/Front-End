@@ -36,6 +36,7 @@ const PERFUME_DETAIL_EXTRA: Record<number, PerfumeDetailExtraT> = {
     rating: 4.8,
     reviewCount: 234,
     ownedCount: 714,
+    likeCount: 892,
   },
   2: {
     description:
@@ -66,6 +67,7 @@ const PERFUME_DETAIL_EXTRA: Record<number, PerfumeDetailExtraT> = {
     rating: 4.5,
     reviewCount: 312,
     ownedCount: 189,
+    likeCount: 543,
   },
   3: {
     description:
@@ -98,6 +100,7 @@ const PERFUME_DETAIL_EXTRA: Record<number, PerfumeDetailExtraT> = {
     rating: 4.8,
     reviewCount: 421,
     ownedCount: 356,
+    likeCount: 1024,
   },
   4: {
     description:
@@ -128,6 +131,7 @@ const PERFUME_DETAIL_EXTRA: Record<number, PerfumeDetailExtraT> = {
     rating: 4.7,
     reviewCount: 289,
     ownedCount: 241,
+    likeCount: 467,
   },
 };
 

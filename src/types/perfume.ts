@@ -38,4 +38,5 @@ export type PerfumeDetailT = PerfumeT & {
   rating: number;
   reviewCount: number;
   ownedCount: number;
+  likeCount: number;
 };
