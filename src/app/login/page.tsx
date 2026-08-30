@@ -1,21 +1,6 @@
-"use client";
-
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-
-import googleIcon from "@/assets/icons/social/google.svg";
-import kakaoIcon from "@/assets/icons/social/kakao.svg";
-import naverIcon from "@/assets/icons/social/naver.svg";
-
-import SocialLoginButton from "./_components/SocialLoginButton";
+import SocialLoginSection from "./_components/SocialLoginSection";
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const handleSocialLogin = () => {
-    router.push("/onboarding/step-1");
-  };
-
   return (
     <main className="flex h-full flex-1 flex-col items-center overflow-y-auto px-8 pt-[18vh]">
       <div className="flex flex-col items-center text-center">
@@ -34,26 +19,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="mt-24 flex w-full flex-col gap-2.5">
-        <SocialLoginButton
-          variant="google"
-          icon={<Image src={googleIcon} alt="" className="h-[18px] w-auto" />}
-          label="Google로 시작하기"
-          onClick={handleSocialLogin}
-        />
-        <SocialLoginButton
-          variant="kakao"
-          icon={<Image src={kakaoIcon} alt="" className="h-[18px] w-auto" />}
-          label="카카오로 시작하기"
-          onClick={handleSocialLogin}
-        />
-        <SocialLoginButton
-          variant="naver"
-          icon={<Image src={naverIcon} alt="" className="h-[18px] w-auto" />}
-          label="네이버로 시작하기"
-          onClick={handleSocialLogin}
-        />
-      </div>
+      <SocialLoginSection />
     </main>
   );
 }
