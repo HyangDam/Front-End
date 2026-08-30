@@ -3,7 +3,7 @@ import { useAuthStore } from "@/hooks/useAuthStore";
 import { createApiError } from "./apiError";
 import { sendRequest } from "./apiRequest";
 import type { ApiRequestOptionsT } from "./apiRequest";
-import { parseResponseBody, unwrapEnvelope } from "./apiResponse";
+import { parseResponseBody } from "./apiResponse";
 import { handleRefreshFailure, refreshAccessToken } from "./refreshToken";
 
 /**
@@ -32,5 +32,5 @@ export const apiClient = async <T>(
   const body = await parseResponseBody(response);
   if (!response.ok) throw createApiError(response.status, body);
 
-  return unwrapEnvelope(body) as T;
+  return body as T;
 };

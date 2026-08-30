@@ -3,7 +3,7 @@ import { useAuthStore } from "@/hooks/useAuthStore";
 import { isRecord } from "@/utils/isRecord";
 
 import { ApiError, createApiError } from "./apiError";
-import { parseResponseBody, unwrapEnvelope } from "./apiResponse";
+import { parseResponseBody } from "./apiResponse";
 
 // 재발급은 access token이 아니라 refresh token을 Bearer로 보낸다
 const requestNewAccessToken = async () => {
@@ -14,7 +14,7 @@ const requestNewAccessToken = async () => {
     method: "POST",
     headers: { Authorization: `Bearer ${refreshToken}` },
   });
-  const body = unwrapEnvelope(await parseResponseBody(response));
+  const body = await parseResponseBody(response);
 
   if (!response.ok) throw createApiError(response.status, body);
 
