@@ -1,5 +1,19 @@
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1";
+const DEV_API_BASE_URL = "http://localhost:8000/api/v1";
+
+/**
+ * NEXT_PUBLIC_* 는 빌드 시점에 인라인된다. 운영 빌드에 값이 없으면 모든 요청이
+ * 사용자 PC의 localhost로 나가므로, 조용히 넘어가지 않고 요청 시점에 막는다.
+ * (모듈 로드 시점에 던지면 환경변수 없는 CI 빌드가 깨진다)
+ */
+export const getApiBaseUrl = () => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (baseUrl) return baseUrl;
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("NEXT_PUBLIC_API_BASE_URL 환경변수가 설정되지 않았습니다.");
+  }
+  return DEV_API_BASE_URL;
+};
 
 export const API_ENDPOINTS = {
   health: "/health",

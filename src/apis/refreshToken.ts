@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ENDPOINTS } from "@/consts/api";
+import { API_ENDPOINTS, getApiBaseUrl } from "@/consts/api";
 import { useAuthStore } from "@/hooks/useAuthStore";
 import { isRecord } from "@/utils/isRecord";
 
@@ -10,7 +10,7 @@ const requestNewAccessToken = async () => {
   const { refreshToken } = useAuthStore.getState();
   if (!refreshToken) throw new ApiError(401, "로그인이 필요해요.");
 
-  const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.auth.refresh}`, {
+  const response = await fetch(`${getApiBaseUrl()}${API_ENDPOINTS.auth.refresh}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${refreshToken}` },
   });

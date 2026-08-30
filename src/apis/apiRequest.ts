@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/consts/api";
+import { getApiBaseUrl } from "@/consts/api";
 
 export type ApiRequestOptionsT = Omit<RequestInit, "body"> & {
   /** JSON으로 직렬화할 요청 본문 */
@@ -10,7 +10,7 @@ export type ApiRequestOptionsT = Omit<RequestInit, "body"> & {
 };
 
 const buildUrl = (path: string, params: ApiRequestOptionsT["params"]) => {
-  const url = new URL(`${API_BASE_URL}${path}`);
+  const url = new URL(`${getApiBaseUrl()}${path}`);
 
   Object.entries(params ?? {}).forEach(([key, value]) => {
     if (value === undefined || value === null || value === "") return;
