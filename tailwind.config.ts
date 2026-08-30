@@ -31,6 +31,7 @@ export default {
           dark: "#c8bfb4", // T.borderDark
         },
         gold: "#c8a870", // T.gold
+        error: "#b4463c", // 에러 메시지 — 팔레트 톤에 맞춘 붉은 계열
         kakao: "#FEE500",
         naver: "#03C75A",
       },
