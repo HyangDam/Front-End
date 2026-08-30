@@ -475,9 +475,9 @@ try {
 
 ### API 관련 코드 생성 시
 
-- HTTP status 기반 분기 (`response.ok`)
-- body 구조: `{ status, data, detail, code }` 가정
-- fetch 래퍼 함수 활용 패턴
+- fetch를 직접 쓰지 않고 `src/apis/apiClient.ts`의 `apiClient` 사용
+- 응답 body는 봉투 없는 평평한 JSON (snake_case) 가정
+- 실패는 `ApiError`로 throw됨 → `error.status` · `error.code`로 분기
 
 ### 의심스러울 때
 
