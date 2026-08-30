@@ -32,7 +32,7 @@
 - **프레임워크**: Next.js (App Router), React 19
 - **상태관리**: Zustand — 세션(로그인), 좋아요/보유 향수, 온보딩 임시 데이터 등 전역 상태
 - **스타일링**: Tailwind CSS v3 — `tailwind.config.ts`에 디자인 토큰(컬러: ivory/sage/rose 계열, 폰트: Noto Serif KR + Plus Jakarta Sans + Courier New) 정의. (Tailwind v4의 CSS-first 설정 대신 v3의 `tailwind.config.ts`를 의도적으로 사용 — 팀 전체가 토큰을 한 파일에서 보기 위함)
-- **API 통신**: TanStack Query (`@tanstack/react-query`) — 도입 시
+- **API 통신**: TanStack Query (`@tanstack/react-query`) — `src/app/providers.tsx`에서 QueryClientProvider 설정. 요청은 `src/apis/apiClient.ts` 경유
 - **스키마 검증**: Zod — 도입 시
 - **API 모킹**: MSW (필요 시)
 - **아이콘**: `src/assets/icons` (inline SVG) — 별도 아이콘 라이브러리 사용 안 함, 프로토타입의 손그림 SVG 스타일 유지
@@ -83,8 +83,9 @@ Front-End/
 │   │   ├── pill-btn/
 │   │   └── bottom-nav/             # kebab-case 폴더, index.tsx 본체
 │   │
-│   ├── apis/                       # 2개 이상 페이지에서 공유하는 API 함수
-│   ├── hooks/                      # 공통 커스텀 훅 (useAppStore 등 Zustand 스토어 포함)
+│   ├── apis/                       # apiClient(통신 기반) + 2개 이상 페이지에서 공유하는 API 함수
+│   ├── consts/                     # 앱 전역 상수 (api.ts — Base URL · 엔드포인트)
+│   ├── hooks/                      # 공통 커스텀 훅 (useAppStore, useAuthStore 등 Zustand 스토어 포함)
 │   ├── utils/                      # 공통 유틸리티
 │   ├── types/                      # 공통 도메인 타입 (T suffix)
 │   ├── assets/                     # 아이콘 · 이미지
@@ -353,87 +354,83 @@ import { formatPrice } from "./utils";
 
 ### 기본 원칙
 
+- 백엔드는 FastAPI. 응답은 **공통 봉투 없이 평평한 JSON**을 그대로 내려준다
 - HTTP Status Code는 REST 의미대로 사용 (200, 201, 400, 401, 403, 404, 500)
-- 성공/실패 Body 구조 통일
+- 필드는 **snake_case** (`access_token`, `user_id`, `birth_date`)
 - fetch는 4xx/5xx에서 자동 throw 안 함 → 반드시 `response.ok` 확인
 - `success` 필드 사용 안 함 (`response.ok`와 중복)
 
-### 응답 구조
+### 성공 응답 구조
 
 ```json
 {
-  "status": 200,
-  "data": {},
-  "detail": "요청이 정상적으로 처리되었습니다.",
-  "code": "COMMON_SUCCESS"
+  "access_token": "...",
+  "refresh_token": "...",
+  "is_new_user": true,
+  "user": { "user_id": 1, "email": "user@example.com" }
 }
 ```
 
-| 필드     | 설명                                     |
-| -------- | ---------------------------------------- |
-| `status` | HTTP Status Code와 동일                  |
-| `data`   | 실제 비즈니스 응답 데이터 (실패 시 null) |
-| `detail` | 응답 메시지 (사용자 표시용)              |
-| `code`   | 서버 정의 Enum 코드 (세부 분기용)        |
+`{ status, data, detail, code }` 봉투는 사용하지 않는다. 응답 본문이 곧 데이터다.
 
-### 검증 오류 응답 (400)
+> 예외: `POST /auth/refresh`만 camelCase(`accessToken`, `memberId`)를 쓴다. 백엔드와 정리되면 이 줄을 지울 것.
+
+### 실패 응답 구조
+
+FastAPI 기본 형태(`detail`)와 명세상 커스텀 형태(`message`)가 섞여 있다. 둘 다 대응한다.
 
 ```json
-{
-  "status": 400,
-  "data": null,
-  "detail": "입력값이 올바르지 않습니다.",
-  "code": "INVALID_INPUT",
-  "errors": [{ "field": "age", "reason": "나이는 숫자만 입력 가능합니다." }]
-}
+{ "detail": "이미 사용 중인 닉네임입니다." }
 ```
 
-### 페이지 응답 구조
-
 ```json
-{
-  "status": 200,
-  "data": [{ "perfumeId": 1, "name": "상탈 33" }],
-  "detail": "요청이 정상적으로 처리되었습니다.",
-  "code": "COMMON_SUCCESS",
-  "pageInfo": { "nextCursor": "abc123", "hasNext": true }
-}
+{ "status_code": 409, "message": "이미 사용 중인 닉네임입니다." }
 ```
 
 ### 프론트엔드 fetch 처리 표준
 
+fetch를 직접 쓰지 않고 `src/apis/apiClient.ts`의 `apiClient`를 사용한다. 인증 요청이 401이면 access token을 한 번 재발급받아 재시도한다.
+
 ```ts
-export async function request(url: string, options?: RequestInit) {
-  const response = await fetch(url, options);
+import { apiClient } from "@/apis/apiClient";
+import { API_ENDPOINTS } from "@/consts/api";
 
-  let body;
-  try {
-    body = await response.json();
-  } catch {
-    throw new Error("서버 응답을 해석할 수 없습니다.");
-  }
+export const getMe = () => apiClient<UserT>(API_ENDPOINTS.users.me, { auth: true });
 
-  if (response.ok) {
-    return body.data;
-  }
-
-  throw new Error(body.detail || "요청 처리 중 오류가 발생했습니다.");
-}
+export const postSocialLogin = (body: PostSocialLoginRequestT) =>
+  apiClient<PostSocialLoginResponseT>(API_ENDPOINTS.auth.socialLogin, {
+    method: "POST",
+    body,
+  });
 ```
 
-### 검증 오류 세부 처리
+| 옵션     | 설명                                                       |
+| -------- | ---------------------------------------------------------- |
+| `auth`   | `true`면 Authorization 헤더 부착 + 401 시 재발급 후 재시도 |
+| `body`   | JSON으로 직렬화할 요청 본문                                |
+| `params` | 쿼리스트링. `undefined` · `null` · 빈 문자열은 제외        |
+
+`src/apis/` 구성:
+
+| 파일              | 역할                                                           |
+| ----------------- | -------------------------------------------------------------- |
+| `apiClient.ts`    | 요청 진입점 — 401 재시도 및 성공/에러 반환                     |
+| `apiRequest.ts`   | URL · 쿼리스트링 · 헤더 · 바디 조립                            |
+| `apiResponse.ts`  | 본문 JSON 파싱 (빈 본문 대응)                                  |
+| `apiError.ts`     | `ApiError` 클래스 + 실패 본문에서 message · code · errors 추출 |
+| `refreshToken.ts` | `/auth/refresh` single-flight, 실패 시 세션 정리 후 `/login`   |
+
+### 에러 처리
+
+실패 시 `apiClient`는 `ApiError`를 throw한다. status · code · errors로 분기한다.
 
 ```ts
-if (response.status === 400 && body.errors) {
-  return body.errors;
-}
-```
-
-### 분기 처리 (세부 에러)
-
-```ts
-if (body.code === "PERFUME_NOT_FOUND") {
-  // 특정 에러 처리
+try {
+  await patchMe(body);
+} catch (error) {
+  if (error instanceof ApiError && error.status === 409) {
+    // 닉네임 중복
+  }
 }
 ```
 
@@ -478,9 +475,9 @@ if (body.code === "PERFUME_NOT_FOUND") {
 
 ### API 관련 코드 생성 시
 
-- HTTP status 기반 분기 (`response.ok`)
-- body 구조: `{ status, data, detail, code }` 가정
-- fetch 래퍼 함수 활용 패턴
+- fetch를 직접 쓰지 않고 `src/apis/apiClient.ts`의 `apiClient` 사용
+- 응답 body는 봉투 없는 평평한 JSON (snake_case) 가정
+- 실패는 `ApiError`로 throw됨 → `error.status` · `error.code`로 분기
 
 ### 의심스러울 때
 
