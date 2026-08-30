@@ -1,13 +1,15 @@
 import { API_ENDPOINTS } from "@/consts/api";
-import type { SocialProviderT } from "@/types/auth";
 import type { UserT } from "@/types/user";
 
 import { apiClient } from "./apiClient";
 
-export type PostSocialLoginRequestT = {
-  provider: SocialProviderT;
-  provider_token: string;
-};
+/**
+ * 구글은 브라우저에서 access token을 바로 받을 수 있어 provider_token을 보내지만,
+ * 카카오는 JS SDK v2가 인가 코드만 주므로 code를 보내고 교환은 백엔드가 한다.
+ */
+export type PostSocialLoginRequestT =
+  | { provider: "google"; provider_token: string }
+  | { provider: "kakao"; code: string; redirect_uri: string };
 
 export type PostSocialLoginResponseT = {
   access_token: string;

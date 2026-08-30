@@ -1,11 +1,5 @@
 /** 카카오 · 구글 로그인 SDK가 script 태그로 주입하는 전역 객체 타입 */
 
-type KakaoAuthSuccessT = {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-};
-
 type GoogleTokenResponseT = {
   access_token?: string;
   error?: string;
@@ -21,10 +15,8 @@ declare global {
       init: (javascriptKey: string) => void;
       isInitialized: () => boolean;
       Auth: {
-        login: (options: {
-          success: (response: KakaoAuthSuccessT) => void;
-          fail: (error: unknown) => void;
-        }) => void;
+        /** 카카오 로그인 페이지로 이동시켜 redirectUri로 인가 코드를 돌려준다 */
+        authorize: (options: { redirectUri: string; scope?: string }) => void;
       };
     };
     google?: {
