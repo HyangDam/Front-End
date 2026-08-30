@@ -20,13 +20,15 @@ export const apiClient = async <T>(
   let response = await sendRequest(path, options, auth ? accessToken : null);
 
   if (response.status === 401 && auth && refreshToken) {
+    let newAccessToken: string;
     try {
-      const newAccessToken = await refreshAccessToken();
-      response = await sendRequest(path, options, newAccessToken);
+      newAccessToken = await refreshAccessToken();
     } catch (error) {
       handleRefreshFailure();
       throw error;
     }
+    // 재시도 요청의 실패(취소·네트워크 오류)는 세션 문제가 아니므로 그대로 전파한다
+    response = await sendRequest(path, options, newAccessToken);
   }
 
   const body = await parseResponseBody(response);
