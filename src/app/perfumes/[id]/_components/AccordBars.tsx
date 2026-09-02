@@ -6,6 +6,8 @@ type AccordBarsProps = {
 };
 
 function AccordBars({ accords }: AccordBarsProps) {
+  if (accords.length === 0) return null;
+
   return (
     <div className="border-b border-border px-[22px] py-4">
       <div className="mb-3.5 font-mono text-[10px] uppercase tracking-[1.5px] text-muted">

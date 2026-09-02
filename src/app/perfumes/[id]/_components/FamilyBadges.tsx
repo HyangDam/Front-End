@@ -1,10 +1,12 @@
 import { getFragranceFamilyInfo } from "../_consts/perfumeFamily.const";
 
 type FamilyBadgesProps = {
-  category: string;
+  category?: string | null;
 };
 
 function FamilyBadges({ category }: FamilyBadgesProps) {
+  if (!category) return null;
+
   const { label, color } = getFragranceFamilyInfo(category);
 
   return (

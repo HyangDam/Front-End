@@ -7,6 +7,7 @@ import type { PerfumeDetailT } from "@/types/perfume";
 
 export const perfumeQueryKey = (perfumeId: number) => ["perfume", perfumeId] as const;
 
+// 좋아요·향수장 보유 API는 인증·데이터 처리 확인 후 2차 연동 예정 — 아직 화면에 연결하지 않음
 export type PostLikeResponseT = {
   perfume_id: number;
   liked: boolean;

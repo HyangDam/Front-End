@@ -1,28 +1,27 @@
 "use client";
 
+import { useAppStore } from "@/hooks/useAppStore";
+
 type StatsActionRowProps = {
+  perfumeId: number;
   ownedCount: number;
   likeCount: number;
-  isOwned: boolean;
-  isLiked: boolean;
-  onToggleOwned: () => void;
-  onToggleLike: () => void;
 };
 
-function StatsActionRow({
-  ownedCount,
-  likeCount,
-  isOwned,
-  isLiked,
-  onToggleOwned,
-  onToggleLike,
-}: StatsActionRowProps) {
+function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProps) {
+  const { likes, owned, toggleLike, toggleOwned } = useAppStore();
+  const isLiked = likes.includes(perfumeId);
+  const isOwned = owned.includes(perfumeId);
+
+  const handleToggleOwned = () => toggleOwned(perfumeId);
+  const handleToggleLike = () => toggleLike(perfumeId);
+
   return (
     <div className="border-b border-border px-[22px] py-3.5">
       <div className="mb-4 flex items-center justify-center gap-5">
         <button
           type="button"
-          onClick={onToggleOwned}
+          onClick={handleToggleOwned}
           aria-pressed={isOwned}
           className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent"
         >
@@ -48,13 +47,13 @@ function StatsActionRow({
           <span
             className={`font-sans text-[13px] ${isOwned ? "text-sage" : "text-muted"}`}
           >
-            보유 {ownedCount}
+            보유 {ownedCount + (isOwned ? 1 : 0)}
           </span>
         </button>
         <div className="h-4 w-px bg-border" />
         <button
           type="button"
-          onClick={onToggleLike}
+          onClick={handleToggleLike}
           aria-pressed={isLiked}
           className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent"
         >
@@ -71,7 +70,7 @@ function StatsActionRow({
           <span
             className={`font-sans text-[13px] ${isLiked ? "text-rose" : "text-muted"}`}
           >
-            좋아요 {likeCount}
+            좋아요 {likeCount + (isLiked ? 1 : 0)}
           </span>
         </button>
       </div>

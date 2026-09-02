@@ -4,6 +4,8 @@ type NoteSectionProps = {
 };
 
 function NoteSection({ label, notes }: NoteSectionProps) {
+  if (notes.length === 0) return null;
+
   return (
     <div>
       <div className="mb-2.5 font-mono text-[9px] tracking-[2px] text-muted">{label}</div>

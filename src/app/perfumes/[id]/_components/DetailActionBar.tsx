@@ -1,23 +1,24 @@
 "use client";
 
+import { useAppStore } from "@/hooks/useAppStore";
+
 type DetailActionBarProps = {
-  isOwned: boolean;
-  isLiked: boolean;
-  onToggleOwned: () => void;
-  onToggleLike: () => void;
+  perfumeId: number;
 };
 
-function DetailActionBar({
-  isOwned,
-  isLiked,
-  onToggleOwned,
-  onToggleLike,
-}: DetailActionBarProps) {
+function DetailActionBar({ perfumeId }: DetailActionBarProps) {
+  const { likes, owned, toggleLike, toggleOwned } = useAppStore();
+  const isLiked = likes.includes(perfumeId);
+  const isOwned = owned.includes(perfumeId);
+
+  const handleToggleLike = () => toggleLike(perfumeId);
+  const handleToggleOwned = () => toggleOwned(perfumeId);
+
   return (
     <div className="flex flex-shrink-0 gap-2.5 border-t border-border bg-paper px-4 py-[18px]">
       <button
         type="button"
-        onClick={onToggleLike}
+        onClick={handleToggleLike}
         aria-label="좋아요"
         aria-pressed={isLiked}
         className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border ${
@@ -37,7 +38,7 @@ function DetailActionBar({
       </button>
       <button
         type="button"
-        onClick={onToggleOwned}
+        onClick={handleToggleOwned}
         aria-pressed={isOwned}
         className={`h-[46px] flex-1 cursor-pointer rounded-[23px] font-sans text-[13px] font-semibold ${
           isOwned

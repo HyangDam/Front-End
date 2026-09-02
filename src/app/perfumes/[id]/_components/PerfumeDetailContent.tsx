@@ -3,12 +3,6 @@
 import { notFound } from "next/navigation";
 
 import { ApiError } from "@/apis/apiError";
-import {
-  useDeleteLike,
-  useDeleteOwnedPerfume,
-  usePostLike,
-  usePostOwnedPerfume,
-} from "@/apis/perfume";
 
 import AccordBars from "./AccordBars";
 import DetailActionBar from "./DetailActionBar";
@@ -31,11 +25,6 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { perfumeData, isPerfumeLoading, perfumeError } = useGetPerfume(perfumeId);
   const { perfumeAccordsData } = useGetPerfumeAccords(perfumeId);
   const { perfumeNotesData } = useGetPerfumeNotesVisualization(perfumeId);
-
-  const { postLikeMutation } = usePostLike(perfumeId);
-  const { deleteLikeMutation } = useDeleteLike(perfumeId);
-  const { postOwnedPerfumeMutation } = usePostOwnedPerfume(perfumeId);
-  const { deleteOwnedPerfumeMutation } = useDeleteOwnedPerfume(perfumeId);
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
 
@@ -63,19 +52,6 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
     );
   }
 
-  const isLiked = perfumeData.is_liked ?? false;
-  const isOwned = perfumeData.is_owned ?? false;
-
-  const handleToggleLike = () => {
-    if (isLiked) deleteLikeMutation();
-    else postLikeMutation();
-  };
-
-  const handleToggleOwned = () => {
-    if (isOwned) deleteOwnedPerfumeMutation();
-    else postOwnedPerfumeMutation();
-  };
-
   return (
     <div className="flex h-full flex-col bg-paper">
       <DetailHeader />
@@ -98,13 +74,11 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
         <FamilyBadges category={perfumeData.category} />
 
+        {/* 좋아요·향수장 보유 API는 인증 처리 확인 후 2차 연동 예정 — 지금은 로컬 상태만 반영 */}
         <StatsActionRow
+          perfumeId={perfumeId}
           ownedCount={perfumeData.owned_count}
           likeCount={perfumeData.like_count}
-          isOwned={isOwned}
-          isLiked={isLiked}
-          onToggleOwned={handleToggleOwned}
-          onToggleLike={handleToggleLike}
         />
 
         <AccordBars accords={perfumeAccordsData?.accords ?? []} />
@@ -119,12 +93,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
         </div>
       </main>
 
-      <DetailActionBar
-        isOwned={isOwned}
-        isLiked={isLiked}
-        onToggleOwned={handleToggleOwned}
-        onToggleLike={handleToggleLike}
-      />
+      <DetailActionBar perfumeId={perfumeId} />
     </div>
   );
 }

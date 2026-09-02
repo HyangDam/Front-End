@@ -20,21 +20,22 @@ export type PerfumeDetailT = {
   perfume_id: number;
   name: string;
   brand: string;
-  type: string;
-  category: string;
-  target_audience: string;
-  longevity: string;
   notes: string;
   description: string;
   image_url: string;
   like_count: number;
   owned_count: number;
   review_count: number;
-  average_rating: number;
-  is_liked: boolean | null;
-  is_owned: boolean | null;
-  can_write_review: boolean | null;
-  my_review_id: number | null;
+  // 배포 서버에 아직 데이터/필드가 채워지지 않아 응답에서 빠질 수 있음
+  type?: string;
+  category?: string;
+  target_audience?: string;
+  longevity?: string;
+  average_rating?: number;
+  is_liked?: boolean | null;
+  is_owned?: boolean | null;
+  can_write_review?: boolean | null;
+  my_review_id?: number | null;
 };
 
 export type PerfumeAccordT = {
