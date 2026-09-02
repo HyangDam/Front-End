@@ -22,7 +22,7 @@ function ReviewList({ reviews }: ReviewListProps) {
           >
             <div className="mb-1.5 flex justify-between">
               <span className="font-sans text-xs font-semibold text-charcoal">
-                사용자 {review.user_id}
+                {review.nickname ?? `사용자 ${review.user_id}`}
               </span>
               <span className="text-[11px] text-gold">{"★".repeat(review.rating)}</span>
             </div>

@@ -18,6 +18,8 @@ export type PerfumeReviewT = {
   content: string;
   created_at: string | null;
   updated_at: string | null;
+  // 백엔드에 닉네임 필드 추가 예정 — 배포 전까지는 응답에 없을 수 있음
+  nickname?: string | null;
 };
 
 export type PerfumeReviewsT = {
