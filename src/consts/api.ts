@@ -27,6 +27,16 @@ export const API_ENDPOINTS = {
   users: {
     me: "/users/me",
     profile: "/users/me/profile",
+    perfumes: "/users/me/perfumes",
+    ownedPerfume: (perfumeId: number) => `/users/me/perfumes/${perfumeId}`,
+  },
+
+  perfumes: {
+    detail: (perfumeId: number) => `/perfumes/${perfumeId}`,
+    accords: (perfumeId: number) => `/perfumes/${perfumeId}/accords`,
+    notesVisualization: (perfumeId: number) =>
+      `/perfumes/${perfumeId}/notes-visualization`,
+    likes: (perfumeId: number) => `/perfumes/${perfumeId}/likes`,
   },
 
   onboarding: {

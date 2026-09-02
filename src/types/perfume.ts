@@ -10,36 +10,50 @@ export type PerfumeT = {
   releasedAt?: string;
 };
 
-export type PerfumeFamilyT = {
-  name: string;
-  color: string;
-};
-
-export type PerfumeAccordT = {
-  name: string;
-  percent: number;
-};
-
-export type PerfumeNoteT = {
-  name: string;
-  emoji: string;
-};
-
 export type PerfumeReviewT = {
   user: string;
   text: string;
   rating: number;
 };
 
-export type PerfumeDetailT = PerfumeT & {
+export type PerfumeDetailT = {
+  perfume_id: number;
+  name: string;
+  brand: string;
+  type: string;
+  category: string;
+  target_audience: string;
+  longevity: string;
+  notes: string;
   description: string;
-  families: PerfumeFamilyT[];
+  image_url: string;
+  like_count: number;
+  owned_count: number;
+  review_count: number;
+  average_rating: number;
+  is_liked: boolean | null;
+  is_owned: boolean | null;
+  can_write_review: boolean | null;
+  my_review_id: number | null;
+};
+
+export type PerfumeAccordT = {
+  name: string;
+  value: number;
+};
+
+export type PerfumeAccordsT = {
+  perfume_id: number;
   accords: PerfumeAccordT[];
-  topNotes: PerfumeNoteT[];
-  middleNotes: PerfumeNoteT[];
-  baseNotes: PerfumeNoteT[];
-  rating: number;
-  reviewCount: number;
-  ownedCount: number;
-  likeCount: number;
+};
+
+export type PerfumeNotesT = {
+  top: string[];
+  middle: string[];
+  base: string[];
+};
+
+export type PerfumeNotesVisualizationT = {
+  perfume_id: number;
+  notes: PerfumeNotesT;
 };
