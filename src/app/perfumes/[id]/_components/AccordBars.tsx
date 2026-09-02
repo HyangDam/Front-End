@@ -1,3 +1,4 @@
+import { getFragranceFamilyInfo } from "../_consts/perfumeFamily.const";
 import type { PerfumeAccordT } from "@/types/perfume";
 
 type AccordBarsProps = {
@@ -14,12 +15,12 @@ function AccordBars({ accords }: AccordBarsProps) {
         {accords.map((accord) => (
           <div key={accord.name} className="flex items-center gap-3">
             <div className="w-[68px] flex-shrink-0 font-sans text-xs text-charcoal">
-              {accord.name}
+              {getFragranceFamilyInfo(accord.name).label}
             </div>
             <div className="h-1.5 flex-1 overflow-hidden rounded-[3px] bg-ivory-200">
               <div
                 className="h-full rounded-[3px] bg-charcoal"
-                style={{ width: `${accord.percent}%` }}
+                style={{ width: `${Math.round(accord.value * 100)}%` }}
               />
             </div>
           </div>
