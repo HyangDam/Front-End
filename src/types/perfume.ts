@@ -11,9 +11,19 @@ export type PerfumeT = {
 };
 
 export type PerfumeReviewT = {
-  user: string;
-  text: string;
+  review_id: number;
+  user_id: number;
+  perfume_id: number;
   rating: number;
+  content: string;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+export type PerfumeReviewsT = {
+  perfume_id: number;
+  review_count: number;
+  results: PerfumeReviewT[];
 };
 
 export type PerfumeDetailT = {

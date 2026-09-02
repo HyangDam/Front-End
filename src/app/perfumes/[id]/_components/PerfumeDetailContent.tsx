@@ -10,11 +10,13 @@ import DetailHeader from "./DetailHeader";
 import DetailHeroImage from "./DetailHeroImage";
 import FamilyBadges from "./FamilyBadges";
 import NoteSection from "./NoteSection";
+import ReviewList from "./ReviewList";
 import StatsActionRow from "./StatsActionRow";
 import {
   useGetPerfume,
   useGetPerfumeAccords,
   useGetPerfumeNotesVisualization,
+  useGetPerfumeReviews,
 } from "../_apis/perfume";
 
 type PerfumeDetailContentProps = {
@@ -25,6 +27,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { perfumeData, isPerfumeLoading, perfumeError } = useGetPerfume(perfumeId);
   const { perfumeAccordsData } = useGetPerfumeAccords(perfumeId);
   const { perfumeNotesData } = useGetPerfumeNotesVisualization(perfumeId);
+  const { perfumeReviewsData } = useGetPerfumeReviews(perfumeId);
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
 
@@ -83,7 +86,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
         <AccordBars accords={perfumeAccordsData?.accords ?? []} />
 
-        <div className="flex flex-col gap-5 px-[22px] pb-[100px] pt-4">
+        <div className="flex flex-col gap-5 px-[22px] pt-4">
           <NoteSection label="TOP NOTES" notes={perfumeNotesData?.notes.top ?? []} />
           <NoteSection
             label="MIDDLE NOTES"
@@ -91,6 +94,8 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           />
           <NoteSection label="BASE NOTES" notes={perfumeNotesData?.notes.base ?? []} />
         </div>
+
+        <ReviewList reviews={perfumeReviewsData?.results ?? []} />
       </main>
 
       <DetailActionBar perfumeId={perfumeId} />

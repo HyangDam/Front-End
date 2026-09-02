@@ -7,6 +7,7 @@ import type {
   PerfumeAccordsT,
   PerfumeDetailT,
   PerfumeNotesVisualizationT,
+  PerfumeReviewsT,
 } from "@/types/perfume";
 
 export const getPerfume = (perfumeId: number) =>
@@ -46,4 +47,15 @@ export const useGetPerfumeNotesVisualization = (perfumeId: number) => {
     queryFn: () => getPerfumeNotesVisualization(perfumeId),
   });
   return { perfumeNotesData };
+};
+
+export const getPerfumeReviews = (perfumeId: number) =>
+  apiClient<PerfumeReviewsT>(API_ENDPOINTS.perfumes.reviews(perfumeId));
+
+export const useGetPerfumeReviews = (perfumeId: number) => {
+  const { data: perfumeReviewsData } = useQuery({
+    queryKey: ["perfume", perfumeId, "reviews"],
+    queryFn: () => getPerfumeReviews(perfumeId),
+  });
+  return { perfumeReviewsData };
 };

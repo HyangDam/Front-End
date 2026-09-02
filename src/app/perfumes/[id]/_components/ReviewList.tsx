@@ -10,20 +10,28 @@ function ReviewList({ reviews }: ReviewListProps) {
       <div className="mb-3 mt-4 font-mono text-[10px] uppercase tracking-[1.5px] text-muted">
         Reviews
       </div>
-      {reviews.map((review, i) => (
-        <div
-          key={review.user}
-          className={`py-3 ${i < reviews.length - 1 ? "border-b border-border" : ""}`}
-        >
-          <div className="mb-1.5 flex justify-between">
-            <span className="font-sans text-xs font-semibold text-charcoal">
-              {review.user}
-            </span>
-            <span className="text-[11px] text-gold">{"★".repeat(review.rating)}</span>
+      {reviews.length === 0 ? (
+        <p className="py-8 text-center font-sans text-xs text-muted">
+          아직 작성된 리뷰가 없어요
+        </p>
+      ) : (
+        reviews.map((review, i) => (
+          <div
+            key={review.review_id}
+            className={`py-3 ${i < reviews.length - 1 ? "border-b border-border" : ""}`}
+          >
+            <div className="mb-1.5 flex justify-between">
+              <span className="font-sans text-xs font-semibold text-charcoal">
+                사용자 {review.user_id}
+              </span>
+              <span className="text-[11px] text-gold">{"★".repeat(review.rating)}</span>
+            </div>
+            <div className="font-sans text-xs leading-[1.75] text-muted">
+              {review.content}
+            </div>
           </div>
-          <div className="font-sans text-xs leading-[1.75] text-muted">{review.text}</div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }

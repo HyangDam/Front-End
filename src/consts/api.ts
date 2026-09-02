@@ -37,6 +37,7 @@ export const API_ENDPOINTS = {
     notesVisualization: (perfumeId: number) =>
       `/perfumes/${perfumeId}/notes-visualization`,
     likes: (perfumeId: number) => `/perfumes/${perfumeId}/likes`,
+    reviews: (perfumeId: number) => `/perfumes/${perfumeId}/reviews`,
   },
 
   onboarding: {
