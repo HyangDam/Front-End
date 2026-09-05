@@ -6,7 +6,6 @@ import Script from "next/script";
 import { SOCIAL_PROVIDERS } from "../_consts/socialProviders.const";
 import { useSocialLogin } from "../_hooks/useSocialLogin";
 import { GOOGLE_SDK_URL } from "../_utils/googleAuth";
-import { KAKAO_SDK_URL } from "../_utils/kakaoAuth";
 import SocialLoginButton from "./SocialLoginButton";
 
 function SocialLoginSection() {
@@ -19,7 +18,6 @@ function SocialLoginSection() {
 
   return (
     <>
-      <Script src={KAKAO_SDK_URL} strategy="afterInteractive" />
       <Script src={GOOGLE_SDK_URL} strategy="afterInteractive" />
 
       <div className="mt-24 flex w-full flex-col gap-2.5">
