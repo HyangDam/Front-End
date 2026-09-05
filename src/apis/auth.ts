@@ -1,5 +1,5 @@
 import { API_ENDPOINTS } from "@/consts/api";
-import type { UserT } from "@/types/user";
+import type { AuthUserT } from "@/types/user";
 
 import { apiClient } from "./apiClient";
 
@@ -14,9 +14,13 @@ export type PostSocialLoginRequestT =
 export type PostSocialLoginResponseT = {
   access_token: string;
   refresh_token: string;
-  token_type: string;
+  token_type?: string;
+  user_id: number;
+  email: string | null;
   is_new_user: boolean;
-  user: UserT;
+  /** 이름 · 성별 · 생년월일 등 기본 정보를 아직 입력하지 않은 상태 */
+  profile_required: boolean;
+  user: AuthUserT;
 };
 
 export const postSocialLogin = (body: PostSocialLoginRequestT) =>
@@ -36,6 +40,5 @@ export type PostLogoutResponseT = {
 export const postLogout = (body: PostLogoutRequestT) =>
   apiClient<PostLogoutResponseT>(API_ENDPOINTS.auth.logout, {
     method: "POST",
-    auth: true,
     body,
   });

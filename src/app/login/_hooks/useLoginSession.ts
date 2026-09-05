@@ -12,10 +12,17 @@ export const useLoginSession = () => {
   const setSession = useAuthStore((state) => state.setSession);
 
   return useCallback(
-    ({ access_token, refresh_token, user, is_new_user }: PostSocialLoginResponseT) => {
+    ({
+      access_token,
+      refresh_token,
+      user,
+      is_new_user,
+      profile_required,
+    }: PostSocialLoginResponseT) => {
       setSession({ accessToken: access_token, refreshToken: refresh_token, user });
-      // 신규 가입자는 온보딩부터, 기존 회원은 바로 홈으로
-      router.replace(is_new_user ? "/onboarding/step-1" : "/home");
+      // 신규 가입자나 기본 정보가 비어 있는 회원은 온보딩부터, 나머지는 바로 홈으로
+      const needsOnboarding = is_new_user || profile_required;
+      router.replace(needsOnboarding ? "/onboarding/step-1" : "/home");
     },
     [router, setSession],
   );
