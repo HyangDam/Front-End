@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/utils/cn";
 
-import { addMonths, formatDateLabel, parseDateString } from "../_utils/calendar";
+import {
+  addMonths,
+  formatDateLabel,
+  getTodayString,
+  parseDateString,
+} from "../_utils/calendar";
 import CalendarGrid from "./CalendarGrid";
 import YearGrid from "./YearGrid";
-
-/** 값이 없을 때 달력이 열리는 기준 연도 (대략적인 사용자 나이) */
-const DEFAULT_AGE = 25;
 
 type BirthDateFieldProps = {
   value: string;
@@ -19,24 +21,54 @@ type BirthDateFieldProps = {
 };
 
 function BirthDateField({ value, minDate, maxDate, onChange }: BirthDateFieldProps) {
-  const parsed = parseDateString(value);
-  const fallbackYear = new Date().getFullYear() - DEFAULT_AGE;
+  const today = getTodayString();
+  const parsed = parseDateString(value || today);
 
   const [isOpen, setIsOpen] = useState(false);
   const [isYearMode, setIsYearMode] = useState(false);
   const [view, setView] = useState({
-    year: parsed?.year ?? fallbackYear,
+    year: parsed?.year ?? 0,
     month: parsed?.month ?? 0,
   });
 
+  const fieldRef = useRef<HTMLDivElement>(null);
+
+  // 달력 바깥을 누르면 닫는다
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      if (fieldRef.current?.contains(event.target as Node)) return;
+      setIsOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+    };
+  }, [isOpen]);
+
   const handleToggle = () => {
-    setIsOpen((prev) => !prev);
     setIsYearMode(false);
+
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+
+    // 처음 열 때는 오늘 날짜를 선택해두고 그 달을 보여준다
+    if (!value) {
+      onChange(today);
+      const todayParts = parseDateString(today);
+      if (todayParts) setView({ year: todayParts.year, month: todayParts.month });
+    }
+    setIsOpen(true);
   };
 
   const handleSelectDate = (selected: string) => {
     onChange(selected);
-    setIsOpen(false);
   };
 
   const handleSelectYear = (year: number) => {
@@ -45,7 +77,7 @@ function BirthDateField({ value, minDate, maxDate, onChange }: BirthDateFieldPro
   };
 
   return (
-    <div>
+    <div ref={fieldRef}>
       <button
         type="button"
         onClick={handleToggle}

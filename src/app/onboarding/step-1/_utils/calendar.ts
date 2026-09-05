@@ -14,6 +14,12 @@ export const parseDateString = (value: string) => {
 
 export const formatDateLabel = (value: string) => value.split("-").join(" . ");
 
+/** 로컬 기준 오늘 날짜. toISOString은 UTC라 시차만큼 어긋날 수 있어 직접 만든다 */
+export const getTodayString = () => {
+  const now = new Date();
+  return toDateString(now.getFullYear(), now.getMonth(), now.getDate());
+};
+
 export const getDaysInMonth = (year: number, month: number) =>
   new Date(year, month + 1, 0).getDate();
 

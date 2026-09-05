@@ -8,6 +8,7 @@ import OnboardShell from "../_common/_components/OnboardShell";
 import { useOnboardingStore } from "../_common/_hooks/useOnboardingStore";
 import BirthDateField from "./_components/BirthDateField";
 import { GENDER_OPTIONS } from "./_consts/genderOptions.const";
+import { getTodayString } from "./_utils/calendar";
 
 const MIN_BIRTH_DATE = "1900-01-01";
 
@@ -19,7 +20,7 @@ export default function OnboardStep1Page() {
     router.push("/onboarding/step-2");
   };
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayString();
   const isBirthDateValid = birthDate >= MIN_BIRTH_DATE && birthDate <= today;
 
   return (
