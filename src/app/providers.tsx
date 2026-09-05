@@ -5,12 +5,19 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 
 import { ApiError } from "@/apis/apiError";
+import { NETWORK_ERROR_STATUS } from "@/apis/apiRequest";
 
 const RETRY_COUNT = 1;
 
-// 400·401·404 같은 클라이언트 오류는 다시 시도해도 결과가 같다
+// 400·401·404 같은 클라이언트 오류는 다시 시도해도 결과가 같다.
+// 다만 응답을 못 받은 경우(status 0)는 일시적인 끊김일 수 있어 재시도한다.
 const retry = (failureCount: number, error: Error) => {
-  if (error instanceof ApiError && error.status < 500) return false;
+  const isClientError =
+    error instanceof ApiError &&
+    error.status !== NETWORK_ERROR_STATUS &&
+    error.status < 500;
+
+  if (isClientError) return false;
   return failureCount < RETRY_COUNT;
 };
 

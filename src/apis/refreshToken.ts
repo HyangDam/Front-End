@@ -1,30 +1,33 @@
-import { API_ENDPOINTS, getApiBaseUrl } from "@/consts/api";
+import { API_ENDPOINTS } from "@/consts/api";
 import { useAuthStore } from "@/hooks/useAuthStore";
 import { isRecord } from "@/utils/isRecord";
 
 import { ApiError, createApiError } from "./apiError";
+import { sendRequest } from "./apiRequest";
 import { parseResponseBody } from "./apiResponse";
 
-// 재발급은 access token이 아니라 refresh token을 Bearer로 보낸다
+// 재발급은 refresh token을 body로 보내고, 새 토큰 한 쌍을 돌려받는다
 const requestNewAccessToken = async () => {
   const { refreshToken } = useAuthStore.getState();
   if (!refreshToken) throw new ApiError(401, "로그인이 필요해요.");
 
-  const response = await fetch(`${getApiBaseUrl()}${API_ENDPOINTS.auth.refresh}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${refreshToken}` },
-  });
+  const response = await sendRequest(
+    API_ENDPOINTS.auth.refresh,
+    { method: "POST", body: { refresh_token: refreshToken } },
+    null,
+  );
   const body = await parseResponseBody(response);
 
   if (!response.ok) throw createApiError(response.status, body);
 
-  // 명세는 accessToken, 다른 응답은 snake_case라 양쪽을 모두 허용한다
-  const accessToken = isRecord(body) ? (body.accessToken ?? body.access_token) : null;
-  if (typeof accessToken !== "string") {
+  const accessToken = isRecord(body) ? body.access_token : null;
+  const newRefreshToken = isRecord(body) ? body.refresh_token : null;
+
+  if (typeof accessToken !== "string" || typeof newRefreshToken !== "string") {
     throw new ApiError(response.status, "토큰 재발급 응답이 올바르지 않습니다.");
   }
 
-  useAuthStore.getState().setAccessToken(accessToken);
+  useAuthStore.getState().setTokens({ accessToken, refreshToken: newRefreshToken });
   return accessToken;
 };
 
