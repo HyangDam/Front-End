@@ -6,6 +6,7 @@ import Chip from "@/components/chip";
 
 import OnboardShell from "../_common/_components/OnboardShell";
 import { useOnboardingStore } from "../_common/_hooks/useOnboardingStore";
+import BirthDateField from "./_components/BirthDateField";
 import { GENDER_OPTIONS } from "./_consts/genderOptions.const";
 
 const MIN_BIRTH_DATE = "1900-01-01";
@@ -45,21 +46,15 @@ export default function OnboardStep1Page() {
         </div>
       </div>
 
-      <div>
-        <label
-          htmlFor="birth-date"
-          className="mb-2.5 block font-sans text-[11px] tracking-[0.5px] text-muted"
-        >
+      <div className="pb-4">
+        <p className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">
           생년월일
-        </label>
-        <input
-          id="birth-date"
-          type="date"
+        </p>
+        <BirthDateField
           value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          min={MIN_BIRTH_DATE}
-          max={today}
-          className="w-full border-0 border-b-[1.5px] border-border bg-transparent py-1.5 font-serif text-[22px] text-charcoal outline-none"
+          minDate={MIN_BIRTH_DATE}
+          maxDate={today}
+          onChange={setBirthDate}
         />
       </div>
     </OnboardShell>
