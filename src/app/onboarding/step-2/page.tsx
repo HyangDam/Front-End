@@ -7,22 +7,26 @@ import Chip from "@/components/chip";
 
 import OnboardSearchField from "../_common/_components/OnboardSearchField";
 import OnboardShell from "../_common/_components/OnboardShell";
+import { useDebouncedValue } from "../_common/_hooks/useDebouncedValue";
 import { useOnboardingStore } from "../_common/_hooks/useOnboardingStore";
-import { CURRENT_PERFUME_OPTIONS } from "./_consts/currentPerfumeOptions.const";
+import { useGetPerfumeSearch } from "./_hooks/useGetPerfumeSearch";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 export default function OnboardStep2Page() {
   const router = useRouter();
   const { currentPerfumes, toggleCurrentPerfume } = useOnboardingStore();
   const [query, setQuery] = useState("");
 
-  const popular = CURRENT_PERFUME_OPTIONS.slice(0, 8);
-  const filtered = query
-    ? CURRENT_PERFUME_OPTIONS.filter((name) => name.includes(query))
-    : popular;
+  const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
+  const { perfumes, isPerfumeSearchPending } = useGetPerfumeSearch(debouncedQuery);
 
   const handleNext = () => {
     router.push("/onboarding/step-3");
   };
+
+  const isSelected = (perfumeId: number) =>
+    currentPerfumes.some((perfume) => perfume.perfume_id === perfumeId);
 
   return (
     <OnboardShell
@@ -47,20 +51,27 @@ export default function OnboardStep2Page() {
       )}
 
       <div className="flex flex-wrap gap-2 pb-4">
-        {filtered.length === 0 ? (
+        {isPerfumeSearchPending && (
+          <p className="w-full py-5 text-center font-sans text-xs text-muted">
+            불러오는 중이에요
+          </p>
+        )}
+
+        {!isPerfumeSearchPending && perfumes.length === 0 && (
           <p className="w-full py-5 text-center font-sans text-xs text-muted">
             검색 결과가 없어요
           </p>
-        ) : (
-          filtered.map((name) => (
-            <Chip
-              key={name}
-              label={name}
-              selected={currentPerfumes.includes(name)}
-              onClick={() => toggleCurrentPerfume(name)}
-            />
-          ))
         )}
+
+        {!isPerfumeSearchPending &&
+          perfumes.map(({ perfume_id, name, brand }) => (
+            <Chip
+              key={perfume_id}
+              label={`${brand} ${name}`}
+              selected={isSelected(perfume_id)}
+              onClick={() => toggleCurrentPerfume({ perfume_id, name, brand })}
+            />
+          ))}
       </div>
     </OnboardShell>
   );
