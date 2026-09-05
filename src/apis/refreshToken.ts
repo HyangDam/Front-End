@@ -1,8 +1,9 @@
-import { API_ENDPOINTS, getApiBaseUrl } from "@/consts/api";
+import { API_ENDPOINTS } from "@/consts/api";
 import { useAuthStore } from "@/hooks/useAuthStore";
 import { isRecord } from "@/utils/isRecord";
 
 import { ApiError, createApiError } from "./apiError";
+import { sendRequest } from "./apiRequest";
 import { parseResponseBody } from "./apiResponse";
 
 // 재발급은 access token이 아니라 refresh token을 Bearer로 보낸다
@@ -10,10 +11,11 @@ const requestNewAccessToken = async () => {
   const { refreshToken } = useAuthStore.getState();
   if (!refreshToken) throw new ApiError(401, "로그인이 필요해요.");
 
-  const response = await fetch(`${getApiBaseUrl()}${API_ENDPOINTS.auth.refresh}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${refreshToken}` },
-  });
+  const response = await sendRequest(
+    API_ENDPOINTS.auth.refresh,
+    { method: "POST", headers: { Authorization: `Bearer ${refreshToken}` } },
+    null,
+  );
   const body = await parseResponseBody(response);
 
   if (!response.ok) throw createApiError(response.status, body);
