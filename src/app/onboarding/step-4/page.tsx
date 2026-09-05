@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import OnboardShell from "../_common/_components/OnboardShell";
 import { useOnboardingStore } from "../_common/_hooks/useOnboardingStore";
 import { DEFAULT_SCENT_EMOJI, SCENT_EMOJI } from "./_consts/scentEmoji.const";
-import { useGetCategories } from "./_hooks/useGetCategories";
+import { useGetCategories } from "@/hooks/useGetCategories";
 
 export default function OnboardStep4Page() {
   const router = useRouter();
