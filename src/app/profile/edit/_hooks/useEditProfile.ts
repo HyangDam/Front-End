@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { getOnboardingMe, patchOnboardingPreferences } from "@/apis/onboarding";
 import { getMe, patchMe } from "@/apis/user";
+import { useAuthStore } from "@/hooks/useAuthStore";
 
 type SaveProfileParamsT = {
   nickname: string;
@@ -15,6 +16,7 @@ type SaveProfileParamsT = {
 export const useEditProfile = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const sessionUser = useAuthStore((state) => state.user);
 
   const { data: meData, isPending: isMePending } = useQuery({
     queryKey: ["me"],
@@ -50,8 +52,16 @@ export const useEditProfile = () => {
     },
   });
 
+  // 마이페이지와 같은 기준으로, 서버에 없는 값은 로그인 세션 정보로 채운다
+  const me = meData && {
+    ...meData,
+    name: meData.name ?? sessionUser?.name ?? null,
+    nickname: meData.nickname ?? sessionUser?.nickname ?? null,
+    profile_image_url: meData.profile_image_url ?? sessionUser?.profile_image_url ?? null,
+  };
+
   return {
-    me: meData,
+    me,
     onboardingMe: onboardingMeData,
     isProfilePending: isMePending || isOnboardingMePending,
     saveProfileMutation,
