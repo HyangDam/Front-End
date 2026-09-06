@@ -1,5 +1,7 @@
 "use client";
 
+import ErrorState from "@/components/error-state";
+
 import { useEditProfile } from "../_hooks/useEditProfile";
 import ProfileEditFields from "./ProfileEditFields";
 
@@ -8,12 +10,13 @@ function ProfileEditForm() {
     me,
     onboardingMe,
     isProfilePending,
+    isProfileError,
+    retryProfile,
     saveProfileMutation,
     isSaveProfilePending,
     saveProfileError,
   } = useEditProfile();
 
-  // 폼 기본값을 초기 state로 넣기 위해, 값이 준비된 뒤에 입력 화면을 그린다
   if (isProfilePending) {
     return (
       <main className="flex-1 px-4 py-6">
@@ -24,13 +27,25 @@ function ProfileEditForm() {
     );
   }
 
+  // 현재 값을 못 읽은 채로 저장하면 기존 취향이 빈 값으로 덮어써진다
+  if (isProfileError || !me || !onboardingMe) {
+    return (
+      <main className="flex-1 px-4 py-6">
+        <ErrorState
+          message="프로필 정보를 불러오지 못해 수정할 수 없어요."
+          onRetry={retryProfile}
+        />
+      </main>
+    );
+  }
+
   return (
     <ProfileEditFields
-      imageUrl={me?.profile_image_url ?? null}
+      imageUrl={me.profile_image_url ?? null}
       initialValues={{
-        nickname: me?.nickname ?? me?.name ?? "",
-        selectedCategories: onboardingMe?.selected_categories ?? [],
-        preferredBrands: onboardingMe?.preferred_brands ?? [],
+        nickname: me.nickname ?? me.name ?? "",
+        selectedCategories: onboardingMe.selected_categories ?? [],
+        preferredBrands: onboardingMe.preferred_brands ?? [],
       }}
       isSaving={isSaveProfilePending}
       errorMessage={saveProfileError?.message}

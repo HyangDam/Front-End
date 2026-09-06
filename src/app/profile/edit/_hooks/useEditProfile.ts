@@ -18,12 +18,22 @@ export const useEditProfile = () => {
   const queryClient = useQueryClient();
   const sessionUser = useAuthStore((state) => state.user);
 
-  const { data: meData, isPending: isMePending } = useQuery({
+  const {
+    data: meData,
+    isPending: isMePending,
+    isError: isMeError,
+    refetch: refetchMe,
+  } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
   });
 
-  const { data: onboardingMeData, isPending: isOnboardingMePending } = useQuery({
+  const {
+    data: onboardingMeData,
+    isPending: isOnboardingMePending,
+    isError: isOnboardingMeError,
+    refetch: refetchOnboardingMe,
+  } = useQuery({
     queryKey: ["onboardingMe"],
     queryFn: getOnboardingMe,
   });
@@ -60,10 +70,21 @@ export const useEditProfile = () => {
     profile_image_url: meData.profile_image_url ?? sessionUser?.profile_image_url ?? null,
   };
 
+  const retryProfile = () => {
+    refetchMe();
+    refetchOnboardingMe();
+  };
+
   return {
     me,
     onboardingMe: onboardingMeData,
     isProfilePending: isMePending || isOnboardingMePending,
+    /**
+     * 취향 조회가 실패한 상태로 저장하면 빈 배열이 전송돼 기존 취향이 지워진다.
+     * 그래서 둘 중 하나라도 실패하면 폼을 그리지 않는다.
+     */
+    isProfileError: isMeError || isOnboardingMeError,
+    retryProfile,
     saveProfileMutation,
     isSaveProfilePending,
     saveProfileError,
