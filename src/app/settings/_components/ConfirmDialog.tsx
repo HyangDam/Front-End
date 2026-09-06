@@ -26,10 +26,12 @@ function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-8">
+      {/* 처리 중에 배경으로 닫으면 결과와 오류를 볼 수 없어 막는다 */}
       <button
         type="button"
         aria-label="닫기"
         onClick={onCancel}
+        disabled={isPending}
         className="absolute inset-0 cursor-default bg-charcoal/35"
       />
 
