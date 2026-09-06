@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-import { useAppStore } from "@/hooks/useAppStore";
-import { PERFUMES } from "@/mocks/perfume";
-import type { PerfumeT } from "@/types/perfume";
+import type { PerfumeSummaryT } from "@/types/perfume";
 
+import { useGetLikedPerfumes } from "../_hooks/useGetLikedPerfumes";
+import { useGetMyPerfumes } from "../_hooks/useGetMyPerfumes";
 import LikedPerfumeRow from "./LikedPerfumeRow";
 import PerfumeShelf3D from "./PerfumeShelf3D";
 
@@ -16,12 +16,18 @@ const MYPAGE_TABS: { id: MypageTab; label: string }[] = [
   { id: "liked", label: "좋아요" },
 ];
 
-const renderTabContent = (
-  tab: MypageTab,
-  likedPerfumes: PerfumeT[],
-  onUnlike: (id: number) => void,
+const renderLikedPerfumes = (
+  likedPerfumes: PerfumeSummaryT[],
+  isPending: boolean,
+  onUnlike: (perfumeId: number) => void,
 ) => {
-  if (tab === "shelf") return <PerfumeShelf3D />;
+  if (isPending) {
+    return (
+      <p className="py-12 text-center font-sans text-[13px] text-muted">
+        불러오는 중이에요
+      </p>
+    );
+  }
 
   if (likedPerfumes.length === 0) {
     return (
@@ -32,14 +38,16 @@ const renderTabContent = (
   }
 
   return likedPerfumes.map((perfume) => (
-    <LikedPerfumeRow key={perfume.id} perfume={perfume} onUnlike={onUnlike} />
+    <LikedPerfumeRow key={perfume.perfume_id} perfume={perfume} onUnlike={onUnlike} />
   ));
 };
 
 function MypageContent() {
   const [tab, setTab] = useState<MypageTab>("shelf");
-  const { likes, toggleLike } = useAppStore();
-  const likedPerfumes = PERFUMES.filter((perfume) => likes.includes(perfume.id));
+
+  const { likedPerfumes, isLikedPerfumesPending, deletePerfumeLikeMutation } =
+    useGetLikedPerfumes();
+  const { myPerfumes } = useGetMyPerfumes();
 
   return (
     <div className="px-4 pb-8">
@@ -55,7 +63,7 @@ function MypageContent() {
           <p className="mb-0.5 font-sans text-[13px] font-semibold text-charcoal">
             좋아요한 향수 목록
           </p>
-          <p className="font-sans text-[11px] text-muted">{likes.length}개</p>
+          <p className="font-sans text-[11px] text-muted">{likedPerfumes.length}개</p>
         </div>
         <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden>
           <path
@@ -86,7 +94,17 @@ function MypageContent() {
         ))}
       </div>
 
-      <div className="pt-4">{renderTabContent(tab, likedPerfumes, toggleLike)}</div>
+      <div className="pt-4">
+        {tab === "shelf" ? (
+          <PerfumeShelf3D myPerfumes={myPerfumes} />
+        ) : (
+          renderLikedPerfumes(
+            likedPerfumes,
+            isLikedPerfumesPending,
+            deletePerfumeLikeMutation,
+          )
+        )}
+      </div>
     </div>
   );
 }
