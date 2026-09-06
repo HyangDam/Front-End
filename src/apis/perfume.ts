@@ -1,16 +1,9 @@
 import { API_ENDPOINTS } from "@/consts/api";
+import type { PerfumeSummaryT } from "@/types/perfume";
 
 import { apiClient } from "./apiClient";
 
-export type PerfumeSearchResultT = {
-  perfume_id: number;
-  name: string;
-  brand: string;
-  notes: string | null;
-  image_url: string | null;
-  like_count: number;
-  category: string | null;
-};
+export type PerfumeSearchResultT = PerfumeSummaryT;
 
 export type GetPerfumeSearchRequestT = {
   keyword?: string;
@@ -33,3 +26,21 @@ export type GetPerfumeSearchResponseT = {
 
 export const getPerfumeSearch = (params: GetPerfumeSearchRequestT) =>
   apiClient<GetPerfumeSearchResponseT>(API_ENDPOINTS.perfumes.search, { params });
+
+export type PerfumeLikeResponseT = {
+  perfume_id: number;
+  liked: boolean;
+  like_count: number;
+};
+
+export const postPerfumeLike = (perfumeId: number) =>
+  apiClient<PerfumeLikeResponseT>(API_ENDPOINTS.perfumes.likes(perfumeId), {
+    method: "POST",
+    auth: true,
+  });
+
+export const deletePerfumeLike = (perfumeId: number) =>
+  apiClient<PerfumeLikeResponseT>(API_ENDPOINTS.perfumes.likes(perfumeId), {
+    method: "DELETE",
+    auth: true,
+  });

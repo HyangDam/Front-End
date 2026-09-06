@@ -3,8 +3,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
-import { postOnboardingPreferences } from "@/apis/onboarding";
+import { saveOnboardingPreferences } from "@/apis/onboarding";
 import { patchMe } from "@/apis/user";
+import { useAuthStore } from "@/hooks/useAuthStore";
+import type { AuthUserT } from "@/types/user";
 
 import { useOnboardingStore } from "../../onboarding/_common/_hooks/useOnboardingStore";
 import type { OnboardingDraftT } from "../../onboarding/_common/_types/onboardingDraft";
@@ -14,16 +16,37 @@ const MIN_VISIBLE_MS = 1800;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const submitOnboarding = async (draft: OnboardingDraftT) => {
+/**
+ * 온보딩에서 이름·닉네임·사진을 따로 묻지 않으므로 소셜 로그인으로 받은 값을 쓴다.
+ * 제공자마다 주는 값이 달라(구글은 name, 카카오는 nickname) 서로 대신 채운다.
+ */
+const buildProfileFields = (user: AuthUserT | null) => {
+  const name = user?.name ?? user?.nickname;
+  const nickname = user?.nickname ?? user?.name;
+
+  return {
+    ...(name ? { name } : {}),
+    ...(nickname ? { nickname } : {}),
+    ...(user?.profile_image_url ? { profile_image_url: user.profile_image_url } : {}),
+  };
+};
+
+type SubmitOnboardingParamsT = {
+  draft: OnboardingDraftT;
+  user: AuthUserT | null;
+};
+
+const submitOnboarding = async ({ draft, user }: SubmitOnboardingParamsT) => {
   const { gender, birthDate, currentPerfumes, brands, scents } = draft;
 
   // 프로필과 취향은 서로 독립적이라 함께 보낸다
   await Promise.all([
     patchMe({
+      ...buildProfileFields(user),
       ...(gender ? { gender } : {}),
       ...(birthDate ? { birth_date: birthDate } : {}),
     }),
-    postOnboardingPreferences({
+    saveOnboardingPreferences({
       current_perfumes: currentPerfumes,
       selected_categories: scents,
       preferred_brands: brands,
@@ -35,13 +58,14 @@ const submitOnboarding = async (draft: OnboardingDraftT) => {
 export const useSubmitOnboarding = () => {
   const router = useRouter();
   const reset = useOnboardingStore((state) => state.reset);
+  const user = useAuthStore((state) => state.user);
 
   const {
     mutate: submitOnboardingMutation,
     isPending: isSubmitOnboardingPending,
     error: submitOnboardingError,
   } = useMutation({
-    mutationFn: submitOnboarding,
+    mutationFn: (draft: OnboardingDraftT) => submitOnboarding({ draft, user }),
     onSuccess: () => {
       reset();
       router.replace("/home");

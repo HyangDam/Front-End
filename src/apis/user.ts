@@ -1,4 +1,5 @@
 import { API_ENDPOINTS } from "@/consts/api";
+import type { PerfumeSummaryT } from "@/types/perfume";
 import type { GenderT, UserT } from "@/types/user";
 
 import { apiClient } from "./apiClient";
@@ -20,6 +21,52 @@ export const patchMe = (body: PatchMeRequestT) =>
     method: "PATCH",
     auth: true,
     body,
+  });
+
+export type GetLikedPerfumesResponseT = {
+  user_id: number;
+  results: PerfumeSummaryT[];
+};
+
+export const getLikedPerfumes = () =>
+  apiClient<GetLikedPerfumesResponseT>(API_ENDPOINTS.users.likedPerfumes, {
+    auth: true,
+  });
+
+/** 향수장에 담긴 한 칸. 향수 정보는 perfume에 중첩돼 온다 */
+export type MyPerfumeT = {
+  id: number;
+  user_id: number;
+  perfume_id: number;
+  status: string;
+  perfume: PerfumeSummaryT;
+  created_at: string | null;
+};
+
+export type GetMyPerfumesResponseT = {
+  user_id: number;
+  results: MyPerfumeT[];
+};
+
+export const getMyPerfumes = () =>
+  apiClient<GetMyPerfumesResponseT>(API_ENDPOINTS.users.myPerfumes, { auth: true });
+
+export type PostMyPerfumeRequestT = {
+  perfume_id: number;
+  status?: string;
+};
+
+export const postMyPerfume = (body: PostMyPerfumeRequestT) =>
+  apiClient<MyPerfumeT>(API_ENDPOINTS.users.myPerfumes, {
+    method: "POST",
+    auth: true,
+    body,
+  });
+
+export const deleteMyPerfume = (perfumeId: number) =>
+  apiClient<void>(API_ENDPOINTS.users.myPerfume(perfumeId), {
+    method: "DELETE",
+    auth: true,
   });
 
 export type DeleteMeRequestT = {
