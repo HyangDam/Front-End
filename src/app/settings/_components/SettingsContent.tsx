@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
+import chevronRightIcon from "@/assets/icons/chevron-right.svg";
 import { useAuthStore } from "@/hooks/useAuthStore";
 
 import { useAccountActions } from "../_hooks/useAccountActions";
@@ -47,7 +49,7 @@ function SettingsContent() {
             className="flex w-full cursor-pointer items-center justify-between border-b border-border px-4 py-3.5 text-left font-sans text-[13px] text-charcoal"
           >
             로그아웃
-            <span className="font-sans text-[11px] text-muted-light">›</span>
+            <Image src={chevronRightIcon} alt="" width={11} height={11} />
           </button>
           <button
             type="button"
@@ -55,7 +57,7 @@ function SettingsContent() {
             className="flex w-full cursor-pointer items-center justify-between px-4 py-3.5 text-left font-sans text-[13px] text-error"
           >
             회원 탈퇴
-            <span className="font-sans text-[11px] text-muted-light">›</span>
+            <Image src={chevronRightIcon} alt="" width={11} height={11} />
           </button>
         </div>
       </section>
