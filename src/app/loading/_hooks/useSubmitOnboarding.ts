@@ -3,7 +3,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
-import { postOnboardingPreferences } from "@/apis/onboarding";
+import { saveOnboardingPreferences } from "@/apis/onboarding";
 import { patchMe } from "@/apis/user";
 
 import { useOnboardingStore } from "../../onboarding/_common/_hooks/useOnboardingStore";
@@ -23,7 +23,7 @@ const submitOnboarding = async (draft: OnboardingDraftT) => {
       ...(gender ? { gender } : {}),
       ...(birthDate ? { birth_date: birthDate } : {}),
     }),
-    postOnboardingPreferences({
+    saveOnboardingPreferences({
       current_perfumes: currentPerfumes,
       selected_categories: scents,
       preferred_brands: brands,
