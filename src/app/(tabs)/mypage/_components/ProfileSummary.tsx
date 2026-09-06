@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
+import pencilIcon from "@/assets/icons/pencil.svg";
 import profileIcon from "@/assets/icons/profile.svg";
 
 import { useGetMyProfile } from "../_hooks/useGetMyProfile";
@@ -43,12 +45,21 @@ function ProfileSummary() {
           <Image src={profileIcon} alt="" width={24} height={24} />
         )}
       </div>
-      <div>
-        <p className="mb-[3px] font-sans text-[15px] font-bold text-charcoal">
-          {isMePending ? " " : displayName}
+
+      <div className="min-w-0 flex-1">
+        <p className="mb-[3px] truncate font-sans text-[15px] font-bold text-charcoal">
+          {isMePending ? " " : displayName}
         </p>
-        <p className="font-sans text-[11px] text-muted">{subLabel}</p>
+        <p className="truncate font-sans text-[11px] text-muted">{subLabel}</p>
       </div>
+
+      <Link
+        href="/profile/edit"
+        aria-label="프로필 수정"
+        className="flex h-8 w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-ivory-200"
+      >
+        <Image src={pencilIcon} alt="" width={15} height={15} />
+      </Link>
     </div>
   );
 }

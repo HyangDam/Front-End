@@ -10,7 +10,7 @@ export default function MyPage() {
   return (
     <div className="bg-ivory">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-ivory px-4 py-3">
-        <h1 className="font-serif text-lg text-charcoal">마이 페이지</h1>
+        <h1 className="font-serif text-lg text-charcoal">마이</h1>
         <Link
           href="/settings"
           aria-label="설정"
