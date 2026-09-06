@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import ErrorState from "@/components/error-state";
 import type { PerfumeSummaryT } from "@/types/perfume";
 
 import { useGetLikedPerfumes } from "../_hooks/useGetLikedPerfumes";
@@ -16,11 +17,15 @@ const MYPAGE_TABS: { id: MypageTab; label: string }[] = [
   { id: "liked", label: "좋아요" },
 ];
 
-const renderLikedPerfumes = (
-  likedPerfumes: PerfumeSummaryT[],
-  isPending: boolean,
-  onUnlike: (perfumeId: number) => void,
-) => {
+type LikedTabProps = {
+  perfumes: PerfumeSummaryT[];
+  isPending: boolean;
+  isError: boolean;
+  onRetry: () => void;
+  onUnlike: (perfumeId: number) => void;
+};
+
+function LikedTab({ perfumes, isPending, isError, onRetry, onUnlike }: LikedTabProps) {
   if (isPending) {
     return (
       <p className="py-12 text-center font-sans text-[13px] text-muted">
@@ -29,7 +34,12 @@ const renderLikedPerfumes = (
     );
   }
 
-  if (likedPerfumes.length === 0) {
+  // 조회 실패를 "좋아요한 향수가 없어요"로 보여주지 않는다
+  if (isError) {
+    return <ErrorState message="좋아요 목록을 불러오지 못했어요." onRetry={onRetry} />;
+  }
+
+  if (perfumes.length === 0) {
     return (
       <p className="py-12 text-center font-sans text-[13px] text-muted">
         좋아요한 향수가 없어요
@@ -37,17 +47,24 @@ const renderLikedPerfumes = (
     );
   }
 
-  return likedPerfumes.map((perfume) => (
+  return perfumes.map((perfume) => (
     <LikedPerfumeRow key={perfume.perfume_id} perfume={perfume} onUnlike={onUnlike} />
   ));
-};
+}
 
 function MypageContent() {
   const [tab, setTab] = useState<MypageTab>("shelf");
 
-  const { likedPerfumes, isLikedPerfumesPending, deletePerfumeLikeMutation } =
-    useGetLikedPerfumes();
-  const { myPerfumes } = useGetMyPerfumes();
+  const {
+    likedPerfumes,
+    isLikedPerfumesPending,
+    isLikedPerfumesError,
+    refetchLikedPerfumes,
+    deletePerfumeLikeMutation,
+  } = useGetLikedPerfumes();
+
+  const { myPerfumes, isMyPerfumesPending, isMyPerfumesError, refetchMyPerfumes } =
+    useGetMyPerfumes();
 
   return (
     <div className="px-4 pb-8">
@@ -63,7 +80,9 @@ function MypageContent() {
           <p className="mb-0.5 font-sans text-[13px] font-semibold text-charcoal">
             좋아요한 향수 목록
           </p>
-          <p className="font-sans text-[11px] text-muted">{likedPerfumes.length}개</p>
+          <p className="font-sans text-[11px] text-muted">
+            {isLikedPerfumesError ? "-" : `${likedPerfumes.length}개`}
+          </p>
         </div>
         <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden>
           <path
@@ -96,13 +115,20 @@ function MypageContent() {
 
       <div className="pt-4">
         {tab === "shelf" ? (
-          <PerfumeShelf3D myPerfumes={myPerfumes} />
+          <PerfumeShelf3D
+            myPerfumes={myPerfumes}
+            isPending={isMyPerfumesPending}
+            isError={isMyPerfumesError}
+            onRetry={refetchMyPerfumes}
+          />
         ) : (
-          renderLikedPerfumes(
-            likedPerfumes,
-            isLikedPerfumesPending,
-            deletePerfumeLikeMutation,
-          )
+          <LikedTab
+            perfumes={likedPerfumes}
+            isPending={isLikedPerfumesPending}
+            isError={isLikedPerfumesError}
+            onRetry={refetchLikedPerfumes}
+            onUnlike={deletePerfumeLikeMutation}
+          />
         )}
       </div>
     </div>

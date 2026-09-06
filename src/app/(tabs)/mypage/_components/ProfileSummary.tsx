@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import pencilIcon from "@/assets/icons/pencil.svg";
 import profileIcon from "@/assets/icons/profile.svg";
+import ErrorState from "@/components/error-state";
 
 import { useGetMyProfile } from "../_hooks/useGetMyProfile";
 
@@ -20,13 +21,22 @@ const buildSubLabel = (age: number | null, preferredScents: string[]) => {
 };
 
 function ProfileSummary() {
-  const { me, preferredScents, isMePending } = useGetMyProfile();
+  const { me, preferredScents, isMePending, isMeError, refetchMe } = useGetMyProfile();
 
   // 소셜 프로필 이미지는 차단 확장 프로그램 등으로 실패할 수 있어 기본 아이콘으로 떨어뜨린다
   const [hasImageError, setHasImageError] = useState(false);
 
   const displayName = me?.nickname || me?.name || FALLBACK_NAME;
   const subLabel = buildSubLabel(me?.age ?? null, preferredScents);
+
+  // 조회 실패를 기본 이름("향기로운 손님")으로 덮어쓰지 않는다
+  if (isMeError) {
+    return (
+      <div className="px-4 pb-2">
+        <ErrorState message="프로필을 불러오지 못했어요." onRetry={() => refetchMe()} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-3.5 px-4 pb-4">
