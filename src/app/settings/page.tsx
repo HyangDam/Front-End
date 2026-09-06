@@ -1,10 +1,11 @@
+import PageHeader from "@/components/page-header";
+
 import SettingsContent from "./_components/SettingsContent";
-import SettingsHeader from "./_components/SettingsHeader";
 
 export default function SettingsPage() {
   return (
     <div className="flex h-full flex-1 flex-col overflow-hidden bg-ivory">
-      <SettingsHeader />
+      <PageHeader title="설정" />
       <SettingsContent />
     </div>
   );
