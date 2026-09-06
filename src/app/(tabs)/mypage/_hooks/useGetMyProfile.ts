@@ -9,12 +9,17 @@ import { useGetCategories } from "@/hooks/useGetCategories";
 
 /** 마이페이지 상단에 필요한 프로필 · 취향 정보를 한 번에 모은다 */
 export const useGetMyProfile = () => {
-  const { data: meData, isPending: isMePending } = useQuery({
+  const {
+    data: meData,
+    isPending: isMePending,
+    isError: isMeError,
+    refetch: refetchMe,
+  } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
   });
 
-  const { data: onboardingMeData } = useQuery({
+  const { data: onboardingMeData, isError: isOnboardingMeError } = useQuery({
     queryKey: ["onboardingMe"],
     queryFn: getOnboardingMe,
   });
@@ -35,5 +40,13 @@ export const useGetMyProfile = () => {
     profile_image_url: meData.profile_image_url ?? sessionUser?.profile_image_url ?? null,
   };
 
-  return { me, preferredScents, isMePending };
+  return {
+    me,
+    preferredScents,
+    isMePending,
+    isMeError,
+    /** 취향 조회만 실패한 경우. 이름은 그대로 보여주고 선호 향만 생략한다 */
+    isOnboardingMeError,
+    refetchMe,
+  };
 };
