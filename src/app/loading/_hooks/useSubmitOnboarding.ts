@@ -17,16 +17,17 @@ const MIN_VISIBLE_MS = 1800;
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * 온보딩에서 이름·닉네임을 따로 묻지 않으므로 소셜 로그인으로 받은 값을 쓴다.
+ * 온보딩에서 이름·닉네임·사진을 따로 묻지 않으므로 소셜 로그인으로 받은 값을 쓴다.
  * 제공자마다 주는 값이 달라(구글은 name, 카카오는 nickname) 서로 대신 채운다.
  */
-const buildNameFields = (user: AuthUserT | null) => {
+const buildProfileFields = (user: AuthUserT | null) => {
   const name = user?.name ?? user?.nickname;
   const nickname = user?.nickname ?? user?.name;
 
   return {
     ...(name ? { name } : {}),
     ...(nickname ? { nickname } : {}),
+    ...(user?.profile_image_url ? { profile_image_url: user.profile_image_url } : {}),
   };
 };
 
@@ -41,7 +42,7 @@ const submitOnboarding = async ({ draft, user }: SubmitOnboardingParamsT) => {
   // 프로필과 취향은 서로 독립적이라 함께 보낸다
   await Promise.all([
     patchMe({
-      ...buildNameFields(user),
+      ...buildProfileFields(user),
       ...(gender ? { gender } : {}),
       ...(birthDate ? { birth_date: birthDate } : {}),
     }),
