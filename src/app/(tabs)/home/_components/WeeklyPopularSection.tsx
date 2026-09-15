@@ -16,11 +16,7 @@ function WeeklyPopularSection() {
 
   return (
     <section className="pt-[26px]">
-      <SectionHeader
-        title="이번 주 인기 향수"
-        subtitle="WEEKLY TOP 10"
-        action="전체보기"
-      />
+      <SectionHeader title="이번 주 인기 향수" subtitle="WEEKLY TOP 10" />
       <div className="no-scrollbar flex gap-2.5 overflow-x-auto px-3.5 pb-1">
         {isWeeklyPopularPerfumesPending ? (
           <p className="px-1 py-2 font-sans text-xs text-muted">불러오는 중...</p>
