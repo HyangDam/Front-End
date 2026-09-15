@@ -29,6 +29,11 @@ export const API_ENDPOINTS = {
     profile: "/users/me/profile",
   },
 
+  perfumes: {
+    // keyword, limit(최대 30)만 지원 — 계열 필터·정렬·페이지네이션은 백엔드에 추가 요청함
+    search: "/perfumes/search",
+  },
+
   onboarding: {
     // TODO(#28): 향수 검색 · 브랜드 목록은 API 문서에 URL이 없어 추정값. 백엔드 확인 후 확정
     perfumes: "/onboarding/perfumes",
