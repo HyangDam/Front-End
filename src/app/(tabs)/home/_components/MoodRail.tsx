@@ -24,7 +24,7 @@ function MoodRail() {
 
   return (
     <div>
-      <div className="no-scrollbar flex gap-2 overflow-x-auto px-3.5 pb-1">
+      <div className="no-scrollbar flex gap-2 overflow-x-auto px-3.5 pb-1 pt-1">
         {moods.map((mood) => {
           const style = getMoodStyle(mood.id);
           const isSelected = selectedMoodId === mood.id;
