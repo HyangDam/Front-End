@@ -32,11 +32,6 @@ export const API_ENDPOINTS = {
     myPerfume: (perfumeId: number) => `/users/me/perfumes/${perfumeId}`,
   },
 
-  perfumes: {
-    // keyword, limit(최대 30)만 지원 — 계열 필터·정렬·페이지네이션은 백엔드에 추가 요청함
-    search: "/perfumes/search",
-  },
-
   onboarding: {
     preferences: "/onboarding/preferences",
     me: "/onboarding/me",

@@ -54,16 +54,3 @@ export type PerfumeDetailT = PerfumeT & {
   ownedCount: number;
   likeCount: number;
 };
-
-export type PerfumeSearchItemT = {
-  perfume_id: number;
-  name: string;
-  brand: string;
-  notes: string;
-  image_url: string;
-};
-
-export type PerfumeSearchT = {
-  keyword: string;
-  results: PerfumeSearchItemT[];
-};
