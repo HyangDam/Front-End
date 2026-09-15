@@ -20,6 +20,8 @@ export const useGetPerfumeSearch = ({
   const {
     data,
     isPending: isPerfumeSearchPending,
+    isError: isPerfumeSearchError,
+    refetch: refetchPerfumeSearch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -41,6 +43,8 @@ export const useGetPerfumeSearch = ({
     perfumes: data?.pages.flatMap((page) => page.results) ?? [],
     total: data?.pages[0]?.total ?? 0,
     isPerfumeSearchPending,
+    isPerfumeSearchError,
+    refetchPerfumeSearch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

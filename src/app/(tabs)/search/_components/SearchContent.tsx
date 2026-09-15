@@ -43,6 +43,8 @@ function SearchContent() {
     perfumes,
     total,
     isPerfumeSearchPending,
+    isPerfumeSearchError,
+    refetchPerfumeSearch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -81,6 +83,19 @@ function SearchContent() {
           <p className="py-14 text-center font-sans text-[13px] text-muted">
             불러오는 중...
           </p>
+        ) : isPerfumeSearchError ? (
+          <div className="flex flex-col items-center gap-3 py-14">
+            <p className="font-sans text-[13px] text-muted">
+              검색 결과를 불러오지 못했어요.
+            </p>
+            <button
+              type="button"
+              onClick={() => refetchPerfumeSearch()}
+              className="cursor-pointer rounded-full border border-border px-4 py-1.5 font-sans text-[12px] text-charcoal"
+            >
+              다시 시도
+            </button>
+          </div>
         ) : perfumes.length === 0 ? (
           <p className="py-14 text-center font-sans text-[13px] text-muted">
             검색 결과가 없어요
