@@ -101,7 +101,7 @@ function CategoryFilterSheet({
         </div>
 
         <p className="mb-3 font-sans text-[11px] text-muted">
-          원하는 향을 모두 선택해주세요
+          선택한 향이 모두 포함된 향수만 보여드려요
         </p>
 
         <div className="mb-6 flex flex-wrap gap-2">
