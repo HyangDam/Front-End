@@ -1,50 +1,58 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import Chip from "@/components/chip";
 import PerfumeCard from "@/components/perfume-card";
 import { useAppStore } from "@/hooks/useAppStore";
-import { PERFUMES } from "@/mocks/perfume";
+import type { PerfumeSummaryT, PerfumeT } from "@/types/perfume";
 
 import SearchBar from "./SearchBar";
 import SortTabs from "./SortTabs";
-import { SEARCH_FAMILY_FILTERS } from "../_consts/search.const";
+import { useDebouncedValue } from "../_hooks/useDebouncedValue";
+import { useGetPerfumeSearch } from "../_hooks/useGetPerfumeSearch";
+import {
+  SEARCH_FAMILY_FILTERS,
+  SEARCH_FAMILY_TO_CATEGORY,
+  SEARCH_SORT_OPTIONS,
+  SEARCH_SORT_TO_PARAM,
+  SEARCH_UNSUPPORTED_SORTS,
+} from "../_consts/search.const";
 import type { SearchFamilyFilterT, SearchSortOptionT } from "../_consts/search.const";
 
-const parsePrice = (price: string) => Number(price.replace(/[^0-9]/g, ""));
+const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => ({
+  id: item.perfume_id,
+  name: item.name,
+  brand: item.brand,
+  brandKr: item.brand,
+  price: "",
+  img: item.image_url ?? undefined,
+});
 
 function SearchContent() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<SearchFamilyFilterT>("전체");
-  const [sort, setSort] = useState<SearchSortOptionT>("인기순");
+  const [sort, setSort] = useState<SearchSortOptionT>(SEARCH_SORT_OPTIONS[0]);
+  const debouncedQuery = useDebouncedValue(query, 300);
   const { likes, toggleLike } = useAppStore();
 
-  const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const filtered = PERFUMES.filter((perfume) => {
-      const matchQuery =
-        q === "" ||
-        perfume.name.toLowerCase().includes(q) ||
-        perfume.brandKr.includes(q) ||
-        perfume.brand.toLowerCase().includes(q);
-      const matchFilter =
-        filter === "전체" || (perfume.familyNames ?? []).includes(filter);
-      return matchQuery && matchFilter;
-    });
+  const category = filter === "전체" ? undefined : SEARCH_FAMILY_TO_CATEGORY[filter];
 
-    if (sort === "최신순") {
-      return [...filtered].sort(
-        (a, b) =>
-          new Date(b.releasedAt ?? 0).getTime() - new Date(a.releasedAt ?? 0).getTime(),
-      );
-    }
-    if (sort === "가격순") {
-      return [...filtered].sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
-    }
-    return [...filtered].sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
-  }, [query, filter, sort]);
+  const {
+    perfumes,
+    total,
+    isPerfumeSearchPending,
+    isPerfumeSearchError,
+    refetchPerfumeSearch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetPerfumeSearch({
+    keyword: debouncedQuery,
+    category,
+    sort: SEARCH_SORT_TO_PARAM[sort],
+  });
 
   return (
     <>
@@ -62,27 +70,64 @@ function SearchContent() {
             />
           ))}
         </div>
-        <SortTabs resultCount={results.length} sort={sort} onChange={setSort} />
+        <SortTabs
+          resultCount={total}
+          sort={sort}
+          onChange={setSort}
+          disabledOptions={SEARCH_UNSUPPORTED_SORTS}
+        />
       </div>
 
       <div className="px-3.5 py-3">
-        {results.length === 0 ? (
+        {isPerfumeSearchPending ? (
+          <p className="py-14 text-center font-sans text-[13px] text-muted">
+            불러오는 중...
+          </p>
+        ) : isPerfumeSearchError ? (
+          <div className="flex flex-col items-center gap-3 py-14">
+            <p className="font-sans text-[13px] text-muted">
+              검색 결과를 불러오지 못했어요.
+            </p>
+            <button
+              type="button"
+              onClick={() => refetchPerfumeSearch()}
+              className="cursor-pointer rounded-full border border-border px-4 py-1.5 font-sans text-[12px] text-charcoal"
+            >
+              다시 시도
+            </button>
+          </div>
+        ) : perfumes.length === 0 ? (
           <p className="py-14 text-center font-sans text-[13px] text-muted">
             검색 결과가 없어요
           </p>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
-            {results.map((perfume) => (
-              <Link key={perfume.id} href={`/perfumes/${perfume.id}`}>
-                <PerfumeCard
-                  perfume={perfume}
-                  variant="compact"
-                  liked={likes.includes(perfume.id)}
-                  onLike={toggleLike}
-                />
-              </Link>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-3 gap-2">
+              {perfumes.map((item) => {
+                const perfume = toPerfumeCardItem(item);
+                return (
+                  <Link key={perfume.id} href={`/perfumes/${perfume.id}`}>
+                    <PerfumeCard
+                      perfume={perfume}
+                      variant="compact"
+                      liked={likes.includes(perfume.id)}
+                      onLike={toggleLike}
+                    />
+                  </Link>
+                );
+              })}
+            </div>
+            {hasNextPage && (
+              <button
+                type="button"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="mt-4 w-full cursor-pointer rounded-full border border-border py-2.5 font-sans text-[13px] text-muted disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isFetchingNextPage ? "불러오는 중..." : "더 보기"}
+              </button>
+            )}
+          </>
         )}
       </div>
     </>

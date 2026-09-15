@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { apiClient } from "@/apis/apiClient";
-import { perfumeQueryKey } from "@/apis/perfume";
 import { API_ENDPOINTS } from "@/consts/api";
 import type {
   PerfumeAccordsT,
@@ -19,7 +18,7 @@ export const useGetPerfume = (perfumeId: number) => {
     isLoading: isPerfumeLoading,
     error: perfumeError,
   } = useQuery({
-    queryKey: perfumeQueryKey(perfumeId),
+    queryKey: ["perfume", perfumeId],
     queryFn: () => getPerfume(perfumeId),
   });
   return { perfumeData, isPerfumeLoading, perfumeError };

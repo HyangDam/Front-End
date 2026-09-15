@@ -1,19 +1,20 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import type { UserT } from "@/types/user";
+import type { AuthUserT } from "@/types/user";
 
 type AuthStoreT = {
   accessToken: string | null;
   refreshToken: string | null;
-  user: UserT | null;
+  user: AuthUserT | null;
   setSession: (session: {
     accessToken: string;
     refreshToken: string;
-    user: UserT;
+    user: AuthUserT;
   }) => void;
-  setAccessToken: (accessToken: string) => void;
-  setUser: (user: UserT) => void;
+  /** 재발급 응답으로 토큰만 갱신한다 (사용자 정보는 그대로 둔다) */
+  setTokens: (tokens: { accessToken: string; refreshToken: string }) => void;
+  setUser: (user: AuthUserT) => void;
   clearSession: () => void;
 };
 
@@ -25,7 +26,7 @@ export const useAuthStore = create<AuthStoreT>()(
       user: null,
       setSession: ({ accessToken, refreshToken, user }) =>
         set({ accessToken, refreshToken, user }),
-      setAccessToken: (accessToken) => set({ accessToken }),
+      setTokens: ({ accessToken, refreshToken }) => set({ accessToken, refreshToken }),
       setUser: (user) => set({ user }),
       clearSession: () => set({ accessToken: null, refreshToken: null, user: null }),
     }),

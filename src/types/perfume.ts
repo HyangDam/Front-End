@@ -1,3 +1,14 @@
+/** 서버가 목록에서 돌려주는 향수 요약. 검색 · 좋아요 · 향수장이 공유한다 */
+export type PerfumeSummaryT = {
+  perfume_id: number;
+  name: string;
+  brand: string;
+  notes?: string | null;
+  image_url?: string | null;
+  like_count?: number;
+  category?: string | null;
+};
+
 export type PerfumeT = {
   id: number;
   name: string;

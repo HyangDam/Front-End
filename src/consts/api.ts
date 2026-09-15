@@ -27,11 +27,18 @@ export const API_ENDPOINTS = {
   users: {
     me: "/users/me",
     profile: "/users/me/profile",
-    perfumes: "/users/me/perfumes",
-    ownedPerfume: (perfumeId: number) => `/users/me/perfumes/${perfumeId}`,
+    likedPerfumes: "/users/me/likes/perfumes",
+    myPerfumes: "/users/me/perfumes",
+    myPerfume: (perfumeId: number) => `/users/me/perfumes/${perfumeId}`,
+  },
+
+  onboarding: {
+    preferences: "/onboarding/preferences",
+    me: "/onboarding/me",
   },
 
   perfumes: {
+    search: "/perfumes/search",
     detail: (perfumeId: number) => `/perfumes/${perfumeId}`,
     accords: (perfumeId: number) => `/perfumes/${perfumeId}/accords`,
     notesVisualization: (perfumeId: number) =>
@@ -40,12 +47,9 @@ export const API_ENDPOINTS = {
     reviews: (perfumeId: number) => `/perfumes/${perfumeId}/reviews`,
   },
 
-  onboarding: {
-    // TODO(#28): 향수 검색 · 브랜드 목록은 API 문서에 URL이 없어 추정값. 백엔드 확인 후 확정
-    perfumes: "/onboarding/perfumes",
-    brands: "/onboarding/brands",
-    categories: "/categories",
-    preferences: "/onboarding/preferences",
-    me: "/onboarding/me",
+  brands: {
+    popular: "/brands/popular",
   },
+
+  categories: "/categories",
 } as const;
