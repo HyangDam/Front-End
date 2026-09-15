@@ -1,27 +1,25 @@
-export const SEARCH_FAMILY_FILTERS = [
-  "전체",
-  "플로럴",
-  "우디",
-  "시트러스",
-  "오리엔탈",
-  "머스크",
-  "스파이시",
-] as const;
-
-export type SearchFamilyFilterT = (typeof SEARCH_FAMILY_FILTERS)[number];
-
-/** GET /perfumes/search의 category 파라미터 값 (백엔드 note_family 계열 id) */
-export const SEARCH_FAMILY_TO_CATEGORY: Record<
-  Exclude<SearchFamilyFilterT, "전체">,
-  string
-> = {
+/**
+ * 향 계열 필터. GET /perfumes/search의 category 파라미터 값(백엔드
+ * note_family 계열 id)을 그대로 매핑한다. 여러 계열을 comma로 함께
+ * 보내면 교집합(AND)으로 필터링된다 — 향이 같이 나는 향수를 찾는
+ * 용도라 자연스러운 동작이라 그대로 사용한다.
+ */
+export const SEARCH_FAMILY_TO_CATEGORY = {
   플로럴: "floral",
   우디: "woody",
   시트러스: "citrus",
   오리엔탈: "oriental",
   머스크: "musk",
   스파이시: "spicy",
-};
+  아쿠아틱: "aquatic",
+  그린: "green",
+  파우더리: "powdery",
+  구르망: "gourmand",
+  프레시: "fresh",
+  어시: "earthy",
+} as const;
+
+export type SearchNonAllFamilyFilterT = keyof typeof SEARCH_FAMILY_TO_CATEGORY;
 
 export const SEARCH_SORT_OPTIONS = ["인기순", "최신순", "가격순"] as const;
 

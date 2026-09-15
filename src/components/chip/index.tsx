@@ -13,12 +13,12 @@ function Chip({ label, selected = false, onClick, size = "md" }: ChipProps) {
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`cursor-pointer whitespace-nowrap rounded-full font-sans transition-colors ${
+      className={`cursor-pointer whitespace-nowrap rounded-full border font-sans transition-colors ${
         size === "sm" ? "px-[11px] py-1 text-[11px]" : "px-3.5 py-[7px] text-xs"
       } ${
         selected
-          ? "border-[1.5px] border-rose bg-rose font-semibold text-white"
-          : "border border-border-dark bg-transparent font-normal text-charcoal"
+          ? "border-rose bg-rose text-white"
+          : "border-border-dark bg-transparent text-charcoal"
       }`}
     >
       {label}

@@ -3,23 +3,25 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import Chip from "@/components/chip";
 import PerfumeCard from "@/components/perfume-card";
 import { useAppStore } from "@/hooks/useAppStore";
 import type { PerfumeSummaryT, PerfumeT } from "@/types/perfume";
 
+import CategoryFilterSheet from "./CategoryFilterSheet";
 import SearchBar from "./SearchBar";
 import SortTabs from "./SortTabs";
 import { useDebouncedValue } from "../_hooks/useDebouncedValue";
 import { useGetPerfumeSearch } from "../_hooks/useGetPerfumeSearch";
 import {
-  SEARCH_FAMILY_FILTERS,
   SEARCH_FAMILY_TO_CATEGORY,
   SEARCH_SORT_OPTIONS,
   SEARCH_SORT_TO_PARAM,
   SEARCH_UNSUPPORTED_SORTS,
 } from "../_consts/search.const";
-import type { SearchFamilyFilterT, SearchSortOptionT } from "../_consts/search.const";
+import type {
+  SearchNonAllFamilyFilterT,
+  SearchSortOptionT,
+} from "../_consts/search.const";
 
 const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => ({
   id: item.perfume_id,
@@ -32,12 +34,26 @@ const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => ({
 
 function SearchContent() {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<SearchFamilyFilterT>("전체");
+  const [filters, setFilters] = useState<SearchNonAllFamilyFilterT[]>([]);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [sort, setSort] = useState<SearchSortOptionT>(SEARCH_SORT_OPTIONS[0]);
   const debouncedQuery = useDebouncedValue(query, 300);
   const { likes, toggleLike } = useAppStore();
 
-  const category = filter === "전체" ? undefined : SEARCH_FAMILY_TO_CATEGORY[filter];
+  const category =
+    filters.length === 0
+      ? undefined
+      : filters.map((f) => SEARCH_FAMILY_TO_CATEGORY[f]).join(",");
+
+  const filterSummary =
+    filters.length <= 2
+      ? filters.join(" · ")
+      : `${filters.slice(0, 2).join(" · ")} 외 ${filters.length - 2}개`;
+
+  const handleApplyFilters = (nextFilters: SearchNonAllFamilyFilterT[]) => {
+    setFilters(nextFilters);
+    setIsFilterSheetOpen(false);
+  };
 
   const {
     perfumes,
@@ -59,16 +75,33 @@ function SearchContent() {
       <div className="sticky top-0 z-10 bg-ivory px-4 pt-3.5">
         <h1 className="mb-3.5 font-serif text-lg text-charcoal">탐색</h1>
         <SearchBar value={query} onChange={setQuery} />
-        <div className="no-scrollbar flex gap-1.5 overflow-x-auto pb-2.5">
-          {SEARCH_FAMILY_FILTERS.map((f) => (
-            <Chip
-              key={f}
-              label={f}
-              selected={filter === f}
-              onClick={() => setFilter(f)}
-              size="sm"
-            />
-          ))}
+        <div className="flex items-center gap-1.5 pb-1.5">
+          <button
+            type="button"
+            onClick={() => setIsFilterSheetOpen(true)}
+            aria-haspopup="dialog"
+            className={`flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-[7px] font-sans text-xs transition-colors ${
+              filters.length > 0
+                ? "border-[1.5px] border-rose bg-rose font-semibold text-white"
+                : "border border-border-dark bg-transparent font-normal text-charcoal"
+            }`}
+          >
+            향 계열
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M6 9L12 15L18 9"
+                stroke={filters.length > 0 ? "#ffffff" : "#1a1814"}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          {filters.length > 0 && (
+            <p className="min-w-0 truncate font-sans text-[11px] text-charcoal">
+              {filterSummary}
+            </p>
+          )}
         </div>
         <SortTabs
           resultCount={total}
@@ -130,6 +163,14 @@ function SearchContent() {
           </>
         )}
       </div>
+
+      {isFilterSheetOpen && (
+        <CategoryFilterSheet
+          selectedFilters={filters}
+          onApply={handleApplyFilters}
+          onClose={() => setIsFilterSheetOpen(false)}
+        />
+      )}
     </>
   );
 }
