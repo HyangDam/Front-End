@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Chip from "@/components/chip";
 
@@ -17,6 +17,9 @@ const ALL_FAMILY_FILTERS = Object.keys(
   SEARCH_FAMILY_TO_CATEGORY,
 ) as SearchNonAllFamilyFilterT[];
 
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
 function CategoryFilterSheet({
   selectedFilters,
   onApply,
@@ -24,6 +27,42 @@ function CategoryFilterSheet({
 }: CategoryFilterSheetProps) {
   const [draftFilters, setDraftFilters] =
     useState<SearchNonAllFamilyFilterT[]>(selectedFilters);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  // 열릴 때 첫 컨트롤로 포커스 이동, Tab/Shift+Tab을 시트 안에 가두고,
+  // 닫힐 때 트리거로 포커스를 되돌린다 (aria-modal만으로는 브라우저가
+  // 포커스를 가둬주지 않는다)
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const dialogEl = dialogRef.current;
+    dialogEl?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !dialogEl) return;
+
+      const focusable = Array.from(
+        dialogEl.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus();
+    };
+  }, []);
 
   const handleToggle = (filter: SearchNonAllFamilyFilterT) => {
     setDraftFilters((prev) =>
@@ -41,6 +80,7 @@ function CategoryFilterSheet({
       />
 
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="향 계열 필터"

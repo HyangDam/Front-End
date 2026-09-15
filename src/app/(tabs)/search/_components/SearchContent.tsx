@@ -80,10 +80,10 @@ function SearchContent() {
             type="button"
             onClick={() => setIsFilterSheetOpen(true)}
             aria-haspopup="dialog"
-            className={`flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-[7px] font-sans text-xs transition-colors ${
+            className={`flex cursor-pointer items-center gap-1 whitespace-nowrap rounded-full border px-3.5 py-[7px] font-sans text-xs transition-colors ${
               filters.length > 0
-                ? "border-[1.5px] border-rose bg-rose font-semibold text-white"
-                : "border border-border-dark bg-transparent font-normal text-charcoal"
+                ? "border-rose bg-rose text-white"
+                : "border-border-dark bg-transparent text-charcoal"
             }`}
           >
             향 계열
