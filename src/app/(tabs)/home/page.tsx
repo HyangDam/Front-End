@@ -6,6 +6,7 @@ import AiPerfumerCta from "./_components/AiPerfumerCta";
 import ArticleHero from "./_components/ArticleHero";
 import MoodRail from "./_components/MoodRail";
 import SectionHeader from "./_components/SectionHeader";
+import WeeklyPopularSection from "./_components/WeeklyPopularSection";
 import { HOME_PERFUMES } from "./_consts/homePerfumes.const";
 
 export default function HomePage() {
@@ -43,20 +44,7 @@ export default function HomePage() {
         <MoodRail />
       </section>
 
-      <section className="pt-[26px]">
-        <SectionHeader
-          title="이번 주 인기 향수"
-          subtitle="WEEKLY TOP 10"
-          action="전체보기"
-        />
-        <div className="no-scrollbar flex gap-2.5 overflow-x-auto px-3.5 pb-1">
-          {HOME_PERFUMES.slice(0, 6).map((perfume, i) => (
-            <Link key={perfume.id} href={`/perfumes/${perfume.id}`}>
-              <PerfumeCard perfume={perfume} variant="hscroll" rank={i + 1} />
-            </Link>
-          ))}
-        </div>
-      </section>
+      <WeeklyPopularSection />
 
       <section className="px-3.5 pb-6 pt-[26px]">
         <SectionHeader title="새로 나온 향수" subtitle="NEW IN" />
