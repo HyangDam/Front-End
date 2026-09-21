@@ -13,6 +13,7 @@ import NoteSection from "./NoteSection";
 import ReviewList from "./ReviewList";
 import StatsActionRow from "./StatsActionRow";
 import { useGetPerfume, useGetPerfumeReviews } from "../_apis/perfume";
+import { toFallbackNotes } from "../_utils/toFallbackNotes";
 
 type PerfumeDetailContentProps = {
   perfumeId: number;
@@ -48,6 +49,14 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
     );
   }
 
+  const notePyramid = perfumeData.note_visualization?.note_pyramid;
+  const hasNotePyramid = Boolean(
+    notePyramid &&
+    (notePyramid.top.length > 0 ||
+      notePyramid.middle.length > 0 ||
+      notePyramid.base.length > 0),
+  );
+
   return (
     <div className="flex h-full flex-col bg-paper">
       <DetailHeader />
@@ -80,18 +89,15 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
         <AccordBars accords={perfumeData.note_visualization?.accord_bars ?? []} />
 
         <div className="flex flex-col gap-5 px-[22px] pt-4">
-          <NoteSection
-            label="TOP NOTES"
-            notes={perfumeData.note_visualization?.note_pyramid.top ?? []}
-          />
-          <NoteSection
-            label="MIDDLE NOTES"
-            notes={perfumeData.note_visualization?.note_pyramid.middle ?? []}
-          />
-          <NoteSection
-            label="BASE NOTES"
-            notes={perfumeData.note_visualization?.note_pyramid.base ?? []}
-          />
+          {hasNotePyramid ? (
+            <>
+              <NoteSection label="TOP NOTES" notes={notePyramid?.top ?? []} />
+              <NoteSection label="MIDDLE NOTES" notes={notePyramid?.middle ?? []} />
+              <NoteSection label="BASE NOTES" notes={notePyramid?.base ?? []} />
+            </>
+          ) : (
+            <NoteSection label="NOTES" notes={toFallbackNotes(perfumeData.notes)} />
+          )}
         </div>
 
         <ReviewList reviews={perfumeReviewsData?.results ?? []} />
