@@ -1,23 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { ANALYSIS_MESSAGES } from "./_consts/analysisMessages.const";
+import PillBtn from "@/components/pill-btn";
 
-const ANALYSIS_DURATION_MS = 3200;
+import { useOnboardingStore } from "../onboarding/_common/_hooks/useOnboardingStore";
+import { ANALYSIS_MESSAGES } from "./_consts/analysisMessages.const";
+import { useSubmitOnboarding } from "./_hooks/useSubmitOnboarding";
+
 const PROGRESS_TICK_MS = 60;
 const MESSAGE_TICK_MS = 900;
+/** 저장이 끝나기 전에는 100%를 보여주지 않는다 */
+const PROGRESS_CEILING = 92;
 
 export default function LoadingPage() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const [messageIndex, setMessageIndex] = useState(0);
 
+  const draft = useOnboardingStore();
+  const { submitOnboardingMutation, submitOnboardingError } = useSubmitOnboarding();
+
+  // React 18 StrictMode에서 effect가 두 번 도는 것을 막는다
+  const hasSubmitted = useRef(false);
+
   useEffect(() => {
-    const done = setTimeout(() => router.push("/home"), ANALYSIS_DURATION_MS);
+    if (hasSubmitted.current) return;
+    hasSubmitted.current = true;
+
+    // 온보딩을 거치지 않고 이 화면에 직접 들어온 경우
+    if (draft.scents.length === 0) {
+      router.replace("/onboarding/step-1");
+      return;
+    }
+
+    submitOnboardingMutation(draft);
+  }, [draft, router, submitOnboardingMutation]);
+
+  useEffect(() => {
     const progressTimer = setInterval(
-      () => setProgress((prev) => Math.min(prev + 2, 100)),
+      () => setProgress((prev) => Math.min(prev + 2, PROGRESS_CEILING)),
       PROGRESS_TICK_MS,
     );
     const messageTimer = setInterval(
@@ -26,11 +49,28 @@ export default function LoadingPage() {
     );
 
     return () => {
-      clearTimeout(done);
       clearInterval(progressTimer);
       clearInterval(messageTimer);
     };
-  }, [router]);
+  }, []);
+
+  if (submitOnboardingError) {
+    return (
+      <main className="flex h-full flex-1 flex-col items-center justify-center gap-6 bg-ivory px-10 text-center">
+        <p role="alert" className="font-sans text-[13px] leading-[1.9] text-error">
+          {submitOnboardingError.message}
+        </p>
+        <PillBtn
+          label="다시 시도하기"
+          onClick={() => {
+            hasSubmitted.current = false;
+            submitOnboardingMutation(draft);
+          }}
+          variant="primary"
+        />
+      </main>
+    );
+  }
 
   return (
     <main className="flex h-full flex-1 flex-col items-center justify-center gap-9 bg-ivory px-10 text-center">

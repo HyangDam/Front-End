@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Noto_Serif_KR, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
+import Providers from "./providers";
+
 const notoSerifKr = Noto_Serif_KR({
   variable: "--font-noto-serif-kr",
   subsets: ["latin"],
@@ -30,7 +32,7 @@ export default function RootLayout({
       className={`${notoSerifKr.variable} ${plusJakartaSans.variable} h-full bg-white`}
     >
       <body className="mx-auto flex h-full min-h-screen w-full max-w-md flex-col overflow-hidden bg-ivory">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
