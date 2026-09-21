@@ -13,6 +13,7 @@ import NoteSection from "./NoteSection";
 import ReviewList from "./ReviewList";
 import StatsActionRow from "./StatsActionRow";
 import { useGetPerfume, useGetPerfumeReviews } from "../_apis/perfume";
+import { getNoteColorMap } from "../_utils/getNoteColorMap";
 import { toFallbackNotes } from "../_utils/toFallbackNotes";
 
 type PerfumeDetailContentProps = {
@@ -49,6 +50,8 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
     );
   }
 
+  const accordBars = perfumeData.note_visualization?.accord_bars ?? [];
+  const noteColorMap = getNoteColorMap(accordBars);
   const notePyramid = perfumeData.note_visualization?.note_pyramid;
   const hasNotePyramid = Boolean(
     notePyramid &&
@@ -77,7 +80,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           imageUrl={perfumeData.image_url}
         />
 
-        <FamilyBadges accords={perfumeData.note_visualization?.accord_bars ?? []} />
+        <FamilyBadges accords={accordBars} />
 
         {/* 좋아요·향수장 보유 API는 인증 처리 확인 후 2차 연동 예정 — 지금은 로컬 상태만 반영 */}
         <StatsActionRow
@@ -86,17 +89,33 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           likeCount={perfumeData.like_count}
         />
 
-        <AccordBars accords={perfumeData.note_visualization?.accord_bars ?? []} />
+        <AccordBars accords={accordBars} />
 
         <div className="flex flex-col gap-5 px-[22px] pb-6 pt-4">
           {hasNotePyramid ? (
             <>
-              <NoteSection label="TOP NOTES" notes={notePyramid?.top ?? []} />
-              <NoteSection label="MIDDLE NOTES" notes={notePyramid?.middle ?? []} />
-              <NoteSection label="BASE NOTES" notes={notePyramid?.base ?? []} />
+              <NoteSection
+                label="TOP NOTES"
+                notes={notePyramid?.top ?? []}
+                noteColorMap={noteColorMap}
+              />
+              <NoteSection
+                label="MIDDLE NOTES"
+                notes={notePyramid?.middle ?? []}
+                noteColorMap={noteColorMap}
+              />
+              <NoteSection
+                label="BASE NOTES"
+                notes={notePyramid?.base ?? []}
+                noteColorMap={noteColorMap}
+              />
             </>
           ) : (
-            <NoteSection label="NOTES" notes={toFallbackNotes(perfumeData.notes)} />
+            <NoteSection
+              label="NOTES"
+              notes={toFallbackNotes(perfumeData.notes)}
+              noteColorMap={noteColorMap}
+            />
           )}
         </div>
 
