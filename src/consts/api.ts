@@ -39,10 +39,8 @@ export const API_ENDPOINTS = {
 
   perfumes: {
     search: "/perfumes/search",
+    // 어코드·노트 시각화는 상세 조회 응답의 note_visualization에 내장돼있어 별도 엔드포인트가 없다
     detail: (perfumeId: number) => `/perfumes/${perfumeId}`,
-    accords: (perfumeId: number) => `/perfumes/${perfumeId}/accords`,
-    notesVisualization: (perfumeId: number) =>
-      `/perfumes/${perfumeId}/notes-visualization`,
     likes: (perfumeId: number) => `/perfumes/${perfumeId}/likes`,
     reviews: (perfumeId: number) => `/perfumes/${perfumeId}/reviews`,
     priceComparison: (perfumeId: number) => `/perfumes/${perfumeId}/price-comparison`,

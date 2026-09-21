@@ -12,12 +12,7 @@ import FamilyBadges from "./FamilyBadges";
 import NoteSection from "./NoteSection";
 import ReviewList from "./ReviewList";
 import StatsActionRow from "./StatsActionRow";
-import {
-  useGetPerfume,
-  useGetPerfumeAccords,
-  useGetPerfumeNotesVisualization,
-  useGetPerfumeReviews,
-} from "../_apis/perfume";
+import { useGetPerfume, useGetPerfumeReviews } from "../_apis/perfume";
 
 type PerfumeDetailContentProps = {
   perfumeId: number;
@@ -25,8 +20,6 @@ type PerfumeDetailContentProps = {
 
 function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { perfumeData, isPerfumeLoading, perfumeError } = useGetPerfume(perfumeId);
-  const { perfumeAccordsData } = useGetPerfumeAccords(perfumeId);
-  const { perfumeNotesData } = useGetPerfumeNotesVisualization(perfumeId);
   const { perfumeReviewsData } = useGetPerfumeReviews(perfumeId);
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
@@ -75,7 +68,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           imageUrl={perfumeData.image_url}
         />
 
-        <FamilyBadges category={perfumeData.category} />
+        <FamilyBadges accords={perfumeData.note_visualization?.accord_bars ?? []} />
 
         {/* 좋아요·향수장 보유 API는 인증 처리 확인 후 2차 연동 예정 — 지금은 로컬 상태만 반영 */}
         <StatsActionRow
@@ -84,15 +77,21 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           likeCount={perfumeData.like_count}
         />
 
-        <AccordBars accords={perfumeAccordsData?.accords ?? []} />
+        <AccordBars accords={perfumeData.note_visualization?.accord_bars ?? []} />
 
         <div className="flex flex-col gap-5 px-[22px] pt-4">
-          <NoteSection label="TOP NOTES" notes={perfumeNotesData?.notes.top ?? []} />
+          <NoteSection
+            label="TOP NOTES"
+            notes={perfumeData.note_visualization?.note_pyramid.top ?? []}
+          />
           <NoteSection
             label="MIDDLE NOTES"
-            notes={perfumeNotesData?.notes.middle ?? []}
+            notes={perfumeData.note_visualization?.note_pyramid.middle ?? []}
           />
-          <NoteSection label="BASE NOTES" notes={perfumeNotesData?.notes.base ?? []} />
+          <NoteSection
+            label="BASE NOTES"
+            notes={perfumeData.note_visualization?.note_pyramid.base ?? []}
+          />
         </div>
 
         <ReviewList reviews={perfumeReviewsData?.results ?? []} />

@@ -39,6 +39,40 @@ export type PerfumeReviewsT = {
   results: PerfumeReviewT[];
 };
 
+export type PerfumeAccordT = {
+  id: string;
+  label: string;
+  color: string;
+  score: number;
+  matched_notes: string[];
+  percentage: number;
+};
+
+export type PerfumeNoteT = {
+  id: string;
+  label_ko: string;
+  label_en: string;
+  icon_key: string;
+  raw_note: string;
+};
+
+export type PerfumeNotePyramidT = {
+  source: string;
+  message: string;
+  top: PerfumeNoteT[];
+  middle: PerfumeNoteT[];
+  base: PerfumeNoteT[];
+};
+
+export type PerfumeNoteVisualizationT = {
+  source: string;
+  message: string;
+  main_accords: PerfumeAccordT[];
+  accord_bars: PerfumeAccordT[];
+  featured_notes: PerfumeNoteT[];
+  note_pyramid: PerfumeNotePyramidT;
+};
+
 export type PerfumeDetailT = {
   perfume_id: number;
   name: string;
@@ -49,9 +83,14 @@ export type PerfumeDetailT = {
   like_count: number;
   owned_count: number;
   review_count: number;
+  representative_price: number | null;
+  released_at: string | null;
+  category: string;
+  categories: string[];
   // 배포 서버에 아직 데이터/필드가 채워지지 않아 응답에서 빠질 수 있음
+  description_ko?: string;
+  note_visualization?: PerfumeNoteVisualizationT;
   type?: string;
-  category?: string;
   target_audience?: string;
   longevity?: string;
   average_rating?: number;
@@ -59,27 +98,6 @@ export type PerfumeDetailT = {
   is_owned?: boolean | null;
   can_write_review?: boolean | null;
   my_review_id?: number | null;
-};
-
-export type PerfumeAccordT = {
-  name: string;
-  value: number;
-};
-
-export type PerfumeAccordsT = {
-  perfume_id: number;
-  accords: PerfumeAccordT[];
-};
-
-export type PerfumeNotesT = {
-  top: string[];
-  middle: string[];
-  base: string[];
-};
-
-export type PerfumeNotesVisualizationT = {
-  perfume_id: number;
-  notes: PerfumeNotesT;
 };
 
 export type PerfumePriceLinkT = {
