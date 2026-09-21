@@ -88,7 +88,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
         <AccordBars accords={perfumeData.note_visualization?.accord_bars ?? []} />
 
-        <div className="flex flex-col gap-5 px-[22px] pt-4">
+        <div className="flex flex-col gap-5 px-[22px] pb-6 pt-4">
           {hasNotePyramid ? (
             <>
               <NoteSection label="TOP NOTES" notes={notePyramid?.top ?? []} />
