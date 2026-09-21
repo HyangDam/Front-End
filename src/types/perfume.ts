@@ -81,3 +81,19 @@ export type PerfumeNotesVisualizationT = {
   perfume_id: number;
   notes: PerfumeNotesT;
 };
+
+export type PerfumePriceLinkT = {
+  retailer: string;
+  url: string;
+  type: string;
+};
+
+export type PerfumePriceComparisonT = {
+  perfume_id: number;
+  query: string;
+  price_status: string;
+  message: string;
+  // 실제 값이 채워진 사례를 아직 못 봐서 형태 미확정 — 현재는 항상 빈 배열
+  offers: unknown[];
+  links: PerfumePriceLinkT[];
+};

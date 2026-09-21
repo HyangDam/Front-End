@@ -6,6 +6,7 @@ import type {
   PerfumeAccordsT,
   PerfumeDetailT,
   PerfumeNotesVisualizationT,
+  PerfumePriceComparisonT,
   PerfumeReviewsT,
 } from "@/types/perfume";
 
@@ -57,4 +58,18 @@ export const useGetPerfumeReviews = (perfumeId: number) => {
     queryFn: () => getPerfumeReviews(perfumeId),
   });
   return { perfumeReviewsData };
+};
+
+export const getPerfumePriceComparison = (perfumeId: number) =>
+  apiClient<PerfumePriceComparisonT>(API_ENDPOINTS.perfumes.priceComparison(perfumeId));
+
+/** 가격 비교 시트를 열 때만 조회한다 — 상세 진입 시 바로 부를 필요는 없음 */
+export const useGetPerfumePriceComparison = (perfumeId: number, enabled: boolean) => {
+  const { data: perfumePriceComparisonData, isLoading: isPerfumePriceComparisonLoading } =
+    useQuery({
+      queryKey: ["perfume", perfumeId, "price-comparison"],
+      queryFn: () => getPerfumePriceComparison(perfumeId),
+      enabled,
+    });
+  return { perfumePriceComparisonData, isPerfumePriceComparisonLoading };
 };

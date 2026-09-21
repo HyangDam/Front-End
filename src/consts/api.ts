@@ -45,6 +45,7 @@ export const API_ENDPOINTS = {
       `/perfumes/${perfumeId}/notes-visualization`,
     likes: (perfumeId: number) => `/perfumes/${perfumeId}/likes`,
     reviews: (perfumeId: number) => `/perfumes/${perfumeId}/reviews`,
+    priceComparison: (perfumeId: number) => `/perfumes/${perfumeId}/price-comparison`,
   },
 
   brands: {

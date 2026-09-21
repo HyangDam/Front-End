@@ -1,6 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
 import { useAppStore } from "@/hooks/useAppStore";
+
+import PriceComparisonSheet from "./PriceComparisonSheet";
 
 type StatsActionRowProps = {
   perfumeId: number;
@@ -10,6 +14,7 @@ type StatsActionRowProps = {
 
 function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProps) {
   const { likes, owned, toggleLike, toggleOwned } = useAppStore();
+  const [isPriceSheetOpen, setIsPriceSheetOpen] = useState(false);
   const isLiked = likes.includes(perfumeId);
   const isOwned = owned.includes(perfumeId);
 
@@ -77,9 +82,8 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
       <div className="flex gap-2.5">
         <button
           type="button"
-          disabled
-          title="준비 중인 기능이에요"
-          className="flex-1 cursor-not-allowed rounded-[22px] border border-border bg-transparent py-2.5 font-sans text-[13px] text-muted-light"
+          onClick={() => setIsPriceSheetOpen(true)}
+          className="flex-1 cursor-pointer rounded-[22px] border border-border bg-transparent py-2.5 font-sans text-[13px] text-charcoal"
         >
           가격 비교
         </button>
@@ -92,6 +96,13 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
           매장 위치
         </button>
       </div>
+
+      {isPriceSheetOpen && (
+        <PriceComparisonSheet
+          perfumeId={perfumeId}
+          onClose={() => setIsPriceSheetOpen(false)}
+        />
+      )}
     </div>
   );
 }
