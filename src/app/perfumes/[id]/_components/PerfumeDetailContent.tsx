@@ -1,8 +1,10 @@
 "use client";
 
 import { notFound } from "next/navigation";
+import { useState } from "react";
 
 import { ApiError } from "@/apis/apiError";
+import type { PerfumeReviewT } from "@/types/perfume";
 
 import AccordBars from "./AccordBars";
 import DetailActionBar from "./DetailActionBar";
@@ -10,9 +12,16 @@ import DetailHeader from "./DetailHeader";
 import DetailHeroImage from "./DetailHeroImage";
 import FamilyBadges from "./FamilyBadges";
 import NoteSection from "./NoteSection";
+import ReviewFormSheet from "./ReviewFormSheet";
 import ReviewList from "./ReviewList";
 import StatsActionRow from "./StatsActionRow";
-import { useGetPerfume, useGetPerfumeReviews } from "../_apis/perfume";
+import {
+  useDeleteReview,
+  useGetPerfume,
+  useGetPerfumeReviews,
+  usePatchReview,
+  usePostReview,
+} from "../_apis/perfume";
 import { getNoteColorMap } from "../_utils/getNoteColorMap";
 import { toFallbackNotes } from "../_utils/toFallbackNotes";
 
@@ -23,6 +32,15 @@ type PerfumeDetailContentProps = {
 function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { perfumeData, isPerfumeLoading, perfumeError } = useGetPerfume(perfumeId);
   const { perfumeReviewsData } = useGetPerfumeReviews(perfumeId);
+
+  const [isReviewSheetOpen, setIsReviewSheetOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState<PerfumeReviewT | null>(null);
+
+  const { postReviewMutation, isPostReviewPending, postReviewError } =
+    usePostReview(perfumeId);
+  const { patchReviewMutation, isPatchReviewPending, patchReviewError } =
+    usePatchReview(perfumeId);
+  const { deleteReviewMutation, isDeleteReviewPending } = useDeleteReview(perfumeId);
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
 
@@ -59,6 +77,29 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
       notePyramid.middle.length > 0 ||
       notePyramid.base.length > 0),
   );
+
+  const handleWriteReview = () => {
+    setEditingReview(null);
+    setIsReviewSheetOpen(true);
+  };
+
+  const handleEditReview = (review: PerfumeReviewT) => {
+    setEditingReview(review);
+    setIsReviewSheetOpen(true);
+  };
+
+  const handleSubmitReview = (values: { rating: number; content: string }) => {
+    if (editingReview) {
+      patchReviewMutation(
+        { reviewId: editingReview.review_id, body: values },
+        { onSuccess: () => setIsReviewSheetOpen(false) },
+      );
+    } else {
+      postReviewMutation(values, { onSuccess: () => setIsReviewSheetOpen(false) });
+    }
+  };
+
+  const reviewError = editingReview ? patchReviewError : postReviewError;
 
   return (
     <div className="flex h-full flex-col bg-paper">
@@ -119,10 +160,30 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           )}
         </div>
 
-        <ReviewList reviews={perfumeReviewsData?.results ?? []} />
+        <ReviewList
+          reviews={perfumeReviewsData?.results ?? []}
+          canWriteReview={perfumeData.can_write_review}
+          myReviewId={perfumeData.my_review_id}
+          isDeletingReview={isDeleteReviewPending}
+          onWriteReview={handleWriteReview}
+          onEditReview={handleEditReview}
+          onDeleteReview={(reviewId) => deleteReviewMutation(reviewId)}
+        />
       </main>
 
       <DetailActionBar perfumeId={perfumeId} />
+
+      {isReviewSheetOpen && (
+        <ReviewFormSheet
+          isEditing={editingReview !== null}
+          initialRating={editingReview?.rating}
+          initialContent={editingReview?.content}
+          isSubmitting={editingReview ? isPatchReviewPending : isPostReviewPending}
+          errorMessage={reviewError instanceof Error ? reviewError.message : undefined}
+          onSubmit={handleSubmitReview}
+          onClose={() => setIsReviewSheetOpen(false)}
+        />
+      )}
     </div>
   );
 }
