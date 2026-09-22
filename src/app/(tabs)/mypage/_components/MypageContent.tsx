@@ -68,34 +68,7 @@ function MypageContent() {
 
   return (
     <div className="px-4 pb-8">
-      <button
-        type="button"
-        onClick={() => setTab("liked")}
-        className="flex w-full cursor-pointer items-center gap-3.5 rounded-xl border border-border bg-paper px-4 py-3.5 text-left"
-      >
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-ivory-200 text-lg">
-          🫙
-        </div>
-        <div className="flex-1">
-          <p className="mb-0.5 font-sans text-[13px] font-semibold text-charcoal">
-            좋아요한 향수 목록
-          </p>
-          <p className="font-sans text-[11px] text-muted">
-            {isLikedPerfumesError ? "-" : `${likedPerfumes.length}개`}
-          </p>
-        </div>
-        <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden>
-          <path
-            d="M1 1l5 5-5 5"
-            stroke="#7d756c"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-
-      <div className="mt-2.5 flex border-b border-border">
+      <div className="flex border-b border-border">
         {MYPAGE_TABS.map((t) => (
           <button
             key={t.id}
