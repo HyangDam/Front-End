@@ -21,6 +21,8 @@ import {
   useGetPerfumeReviews,
   usePatchReview,
   usePostReview,
+  useTogglePerfumeLike,
+  useTogglePerfumeOwned,
 } from "../_apis/perfume";
 import { getNoteColorMap } from "../_utils/getNoteColorMap";
 import { toFallbackNotes } from "../_utils/toFallbackNotes";
@@ -41,6 +43,11 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { patchReviewMutation, isPatchReviewPending, patchReviewError } =
     usePatchReview(perfumeId);
   const { deleteReviewMutation, isDeleteReviewPending } = useDeleteReview(perfumeId);
+
+  const { postPerfumeLikeMutation, deletePerfumeLikeMutation } =
+    useTogglePerfumeLike(perfumeId);
+  const { postMyPerfumeMutation, deleteMyPerfumeMutation } =
+    useTogglePerfumeOwned(perfumeId);
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
 
@@ -101,6 +108,19 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
   const reviewError = editingReview ? patchReviewError : postReviewError;
 
+  const isLiked = perfumeData.is_liked ?? false;
+  const isOwned = perfumeData.is_owned ?? false;
+
+  const handleToggleLike = () => {
+    if (isLiked) deletePerfumeLikeMutation();
+    else postPerfumeLikeMutation();
+  };
+
+  const handleToggleOwned = () => {
+    if (isOwned) deleteMyPerfumeMutation();
+    else postMyPerfumeMutation();
+  };
+
   return (
     <div className="flex h-full flex-col bg-paper">
       <DetailHeader />
@@ -123,11 +143,14 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
         <FamilyBadges accords={accordBars} />
 
-        {/* 좋아요·향수장 보유 API는 인증 처리 확인 후 2차 연동 예정 — 지금은 로컬 상태만 반영 */}
         <StatsActionRow
           perfumeId={perfumeId}
           ownedCount={perfumeData.owned_count}
           likeCount={perfumeData.like_count}
+          isOwned={isOwned}
+          isLiked={isLiked}
+          onToggleOwned={handleToggleOwned}
+          onToggleLike={handleToggleLike}
         />
 
         <AccordBars accords={accordBars} />
@@ -171,7 +194,12 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
         />
       </main>
 
-      <DetailActionBar perfumeId={perfumeId} />
+      <DetailActionBar
+        isOwned={isOwned}
+        isLiked={isLiked}
+        onToggleOwned={handleToggleOwned}
+        onToggleLike={handleToggleLike}
+      />
 
       {isReviewSheetOpen && (
         <ReviewFormSheet
