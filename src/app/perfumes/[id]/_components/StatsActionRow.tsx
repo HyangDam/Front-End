@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { useAppStore } from "@/hooks/useAppStore";
+import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 
 import PriceComparisonSheet from "./PriceComparisonSheet";
 
@@ -13,13 +14,15 @@ type StatsActionRowProps = {
 };
 
 function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProps) {
-  const { likes, owned, toggleLike, toggleOwned } = useAppStore();
+  const { owned, toggleOwned } = useAppStore();
+  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
   const [isPriceSheetOpen, setIsPriceSheetOpen] = useState(false);
-  const isLiked = likes.includes(perfumeId);
+
+  const isLiked = getIsLiked(perfumeId);
   const isOwned = owned.includes(perfumeId);
 
   const handleToggleOwned = () => toggleOwned(perfumeId);
-  const handleToggleLike = () => toggleLike(perfumeId);
+  const handleToggleLike = () => toggleLikeMutation(perfumeId);
 
   return (
     <div className="border-b border-border px-[22px] py-3.5">
@@ -59,8 +62,9 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
         <button
           type="button"
           onClick={handleToggleLike}
+          disabled={!canToggleLike}
           aria-pressed={isLiked}
-          className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent"
+          className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent transition-opacity disabled:cursor-default disabled:opacity-50"
         >
           <svg
             width="15"

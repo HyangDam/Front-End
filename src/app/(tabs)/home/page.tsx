@@ -14,12 +14,6 @@ export default function HomePage() {
     <div className="bg-ivory">
       <header className="sticky top-0 z-10 flex items-center justify-center border-b border-border bg-ivory px-4 py-3">
         <h1 className="font-logo text-[26px] tracking-[6px] text-charcoal">香談</h1>
-        <Link
-          href="/mypage"
-          className="absolute right-4 flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full bg-sage font-serif text-xs text-white"
-        >
-          담
-        </Link>
       </header>
 
       <ArticleHero />

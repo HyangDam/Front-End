@@ -48,7 +48,7 @@ function OnboardShell({
 
       <div className="flex-1 overflow-y-auto px-7">{children}</div>
 
-      <div className="flex flex-shrink-0 gap-2.5 px-7 pb-7 pt-4">
+      <div className="flex flex-shrink-0 gap-2.5 px-7 pb-[calc(1.75rem+env(safe-area-inset-bottom))] pt-4">
         <PillBtn label="이전" href={backHref} variant="ghost" />
         <div className="flex-1">
           <PillBtn

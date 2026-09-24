@@ -20,9 +20,6 @@ export const useSocialLogin = () => {
     variables: pendingProvider,
   } = useMutation({
     mutationFn: async (provider: SocialProviderT) => {
-      // 네이버는 백엔드 소셜 로그인 API가 아직 kakao · google만 지원한다
-      if (provider === "naver") throw new Error("네이버 로그인은 준비 중이에요.");
-
       if (provider === "kakao") {
         redirectToKakaoLogin();
         // 카카오 페이지로 떠나므로 이 요청은 끝나지 않는다.

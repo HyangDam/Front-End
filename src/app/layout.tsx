@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Serif_KR } from "next/font/google";
 import "./globals.css";
 
@@ -16,20 +16,30 @@ export const metadata: Metadata = {
   description: "취향 기반 향수 추천 & AI 조향사 서비스",
 };
 
+/** iOS 하단 홈 인디케이터 영역까지 그리려면 viewport-fit=cover가 필요하다 */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${notoSerifKr.variable} h-full bg-white`}>
+    <html lang="ko" className={`${notoSerifKr.variable} h-full bg-basement`}>
       <head>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        {/* 한글 전체를 받지 않고 쓰인 글자만 내려받는 서브셋 버전 */}
         <link
           rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
       </head>
-      <body className="mx-auto flex h-full min-h-screen w-full max-w-md flex-col overflow-hidden bg-ivory">
+      {/* 모바일 주소창에 가려지지 않도록 100vh 대신 동적 뷰포트 높이(dvh)를 쓴다 */}
+      <body className="mx-auto flex h-dvh w-full max-w-md flex-col overflow-hidden bg-ivory">
         <Providers>{children}</Providers>
       </body>
     </html>

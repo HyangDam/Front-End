@@ -1,17 +1,20 @@
 "use client";
 
 import { useAppStore } from "@/hooks/useAppStore";
+import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 
 type DetailActionBarProps = {
   perfumeId: number;
 };
 
 function DetailActionBar({ perfumeId }: DetailActionBarProps) {
-  const { likes, owned, toggleLike, toggleOwned } = useAppStore();
-  const isLiked = likes.includes(perfumeId);
+  const { owned, toggleOwned } = useAppStore();
+  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
+
+  const isLiked = getIsLiked(perfumeId);
   const isOwned = owned.includes(perfumeId);
 
-  const handleToggleLike = () => toggleLike(perfumeId);
+  const handleToggleLike = () => toggleLikeMutation(perfumeId);
   const handleToggleOwned = () => toggleOwned(perfumeId);
 
   return (
@@ -19,9 +22,10 @@ function DetailActionBar({ perfumeId }: DetailActionBarProps) {
       <button
         type="button"
         onClick={handleToggleLike}
+        disabled={!canToggleLike}
         aria-label="좋아요"
         aria-pressed={isLiked}
-        className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border ${
+        className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border transition-opacity disabled:cursor-default disabled:opacity-50 ${
           isLiked ? "border-rose bg-rose-light" : "border-border bg-transparent"
         }`}
       >
