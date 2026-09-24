@@ -19,8 +19,14 @@ const MARGIN = 1.12;
 function FitCamera({ contentWidth, contentHeight }: FitCameraProps) {
   const camera = useThree((state) => state.camera);
   const size = useThree((state) => state.size);
+  const controls = useThree((state) => state.controls) as {
+    update?: () => void;
+  } | null;
 
   useEffect(() => {
+    // 레이아웃이 잡히기 전에는 크기가 0이라 비율을 계산할 수 없다
+    if (!size.width || !size.height) return;
+
     const perspective = camera as PerspectiveCamera;
     const halfFov = (perspective.fov * Math.PI) / 360;
     const aspect = size.width / size.height;
@@ -29,13 +35,18 @@ function FitCamera({ contentWidth, contentHeight }: FitCameraProps) {
     const distanceForHeight = contentHeight / 2 / Math.tan(halfFov);
     const distanceForWidth = contentWidth / 2 / (Math.tan(halfFov) * aspect);
 
-    perspective.position.set(
-      0,
-      0,
-      Math.max(distanceForHeight, distanceForWidth) * MARGIN,
-    );
+    /**
+     * 완전히 정면이면 선반 위가 안 보여 반사가 드러나지 않는다.
+     * 눈높이를 조금 올려 살짝 내려다보게 한다.
+     */
+    const distance = Math.max(distanceForHeight, distanceForWidth) * MARGIN;
+    perspective.position.set(0, contentHeight * 0.13, distance);
+    perspective.lookAt(0, 0, 0);
     perspective.updateProjectionMatrix();
-  }, [camera, size, contentWidth, contentHeight]);
+
+    // 컨트롤이 예전 위치를 들고 있으면 카메라를 되돌려버린다
+    controls?.update?.();
+  }, [camera, controls, size, contentWidth, contentHeight]);
 
   return null;
 }
