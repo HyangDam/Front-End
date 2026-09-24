@@ -44,11 +44,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
     usePatchReview(perfumeId);
   const { deleteReviewMutation, isDeleteReviewPending } = useDeleteReview(perfumeId);
 
-  const {
-    isLiked: getIsLiked,
-    toggleLikeMutation,
-    canToggleLike,
-  } = usePerfumeLike();
+  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
   const { postMyPerfumeMutation, deleteMyPerfumeMutation } =
     useTogglePerfumeOwned(perfumeId);
 

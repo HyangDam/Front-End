@@ -30,9 +30,7 @@ function SettingsContent() {
   return (
     <main className="flex-1 overflow-y-auto px-4 py-5">
       <section className="mb-6">
-        <h2 className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">
-          계정
-        </h2>
+        <h2 className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">계정</h2>
         <div className="rounded-xl border border-border bg-paper px-4 py-3.5">
           <p className="mb-0.5 font-sans text-[11px] text-muted">로그인한 계정</p>
           <p className="font-sans text-[13px] text-charcoal">{user?.email ?? "-"}</p>
@@ -62,9 +60,7 @@ function SettingsContent() {
       </section>
 
       <section>
-        <h2 className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">
-          관리
-        </h2>
+        <h2 className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">관리</h2>
         <div className="overflow-hidden rounded-xl border border-border bg-paper">
           <button
             type="button"
