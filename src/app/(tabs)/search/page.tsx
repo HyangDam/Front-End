@@ -1,9 +1,13 @@
+import { Suspense } from "react";
+
 import SearchContent from "./_components/SearchContent";
 
 export default function SearchPage() {
   return (
     <main>
-      <SearchContent />
+      <Suspense fallback={null}>
+        <SearchContent />
+      </Suspense>
     </main>
   );
 }

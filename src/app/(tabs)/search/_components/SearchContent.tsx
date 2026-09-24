@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import PerfumeCard from "@/components/perfume-card";
@@ -13,6 +14,7 @@ import SortTabs from "./SortTabs";
 import { useDebouncedValue } from "../_hooks/useDebouncedValue";
 import { useGetPerfumeSearch } from "../_hooks/useGetPerfumeSearch";
 import {
+  parseCategoryParam,
   SEARCH_FAMILY_TO_CATEGORY,
   SEARCH_SORT_OPTIONS,
   SEARCH_SORT_TO_PARAM,
@@ -33,8 +35,11 @@ const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => ({
 });
 
 function SearchContent() {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<SearchNonAllFamilyFilterT[]>([]);
+  const [filters, setFilters] = useState<SearchNonAllFamilyFilterT[]>(() =>
+    parseCategoryParam(searchParams.get("category")),
+  );
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [sort, setSort] = useState<SearchSortOptionT>(SEARCH_SORT_OPTIONS[0]);
   const debouncedQuery = useDebouncedValue(query, 300);
