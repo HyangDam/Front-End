@@ -92,15 +92,15 @@ function PerfumeShelf3D({
   if (!canShow3D) return <PerfumeShelfGrid myPerfumes={myPerfumes} />;
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <ShelfViewToggle view={view} onChange={setView} />
 
       {view === "grid" ? (
         <PerfumeShelfGrid myPerfumes={myPerfumes} />
       ) : (
         <ShelfErrorBoundary fallback={<PerfumeShelfGrid myPerfumes={myPerfumes} />}>
-          {/* 프로필·탭·하단 네비를 뺀 나머지를 채워, 진열장 아래에 빈 공간이 남지 않게 한다 */}
-          <div className="h-[calc(100dvh-350px)] min-h-[280px] w-full overflow-hidden rounded-2xl bg-white">
+          {/* 토글과 안내 문구를 뺀 나머지를 차지해, 화면에 딱 맞고 스크롤이 생기지 않게 한다 */}
+          <div className="min-h-[260px] w-full flex-1 overflow-hidden rounded-2xl bg-white">
             <Shelf3DScene myPerfumes={myPerfumes} />
           </div>
           <p className="mt-2 text-center font-sans text-[11px] text-muted-light">
@@ -108,7 +108,7 @@ function PerfumeShelf3D({
           </p>
         </ShelfErrorBoundary>
       )}
-    </>
+    </div>
   );
 }
 

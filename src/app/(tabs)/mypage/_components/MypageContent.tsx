@@ -71,8 +71,8 @@ function MypageContent() {
     useGetMyPerfumes();
 
   return (
-    <div className="px-4 pb-8">
-      <div className="flex border-b border-border">
+    <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
+      <div className="flex flex-shrink-0 border-b border-border">
         {MYPAGE_TABS.map((t) => (
           <button
             key={t.id}
@@ -81,7 +81,7 @@ function MypageContent() {
             aria-pressed={tab === t.id}
             className={`flex-1 cursor-pointer border-b-2 py-2.5 font-sans text-[11px] ${
               tab === t.id
-                ? "border-sage font-bold text-sage"
+                ? "border-rose font-bold text-rose"
                 : "border-transparent font-normal text-muted"
             }`}
           >
@@ -90,7 +90,7 @@ function MypageContent() {
         ))}
       </div>
 
-      <div className="pt-4">
+      <div className="min-h-0 flex-1 overflow-y-auto pt-4">
         {tab === "shelf" ? (
           <PerfumeShelf3D
             myPerfumes={myPerfumes}
