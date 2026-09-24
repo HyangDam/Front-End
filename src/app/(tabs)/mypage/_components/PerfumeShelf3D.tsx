@@ -100,7 +100,7 @@ function PerfumeShelf3D({
       ) : (
         <ShelfErrorBoundary fallback={<PerfumeShelfGrid myPerfumes={myPerfumes} />}>
           {/* 프로필·탭·하단 네비를 뺀 나머지를 채워, 진열장 아래에 빈 공간이 남지 않게 한다 */}
-          <div className="h-[calc(100dvh-350px)] min-h-[280px] w-full overflow-hidden rounded-2xl border border-border bg-white">
+          <div className="h-[calc(100dvh-350px)] min-h-[280px] w-full overflow-hidden rounded-2xl bg-white">
             <Shelf3DScene myPerfumes={myPerfumes} />
           </div>
           <p className="mt-2 text-center font-sans text-[11px] text-muted-light">
