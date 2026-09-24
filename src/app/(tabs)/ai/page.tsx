@@ -7,32 +7,20 @@ import ChatInput from "./_components/ChatInput";
 import ChatMessage from "./_components/ChatMessage";
 import QuickPrompts from "./_components/QuickPrompts";
 import ThinkingDots from "./_components/ThinkingDots";
-import {
-  AI_DUMMY_RESPONSE,
-  AI_INTRO_MESSAGE,
-  AI_RESPONSE_DELAY_MS,
-} from "./_consts/aiChat.const";
-import type { ChatMessageT } from "./_types/chatMessage";
+import { usePostChatRecommend } from "./_hooks/usePostChatRecommend";
 
 export default function AiPage() {
-  const [messages, setMessages] = useState<ChatMessageT[]>([AI_INTRO_MESSAGE]);
+  const { messages, sendMessage, isChatRecommendPending } = usePostChatRecommend();
   const [input, setInput] = useState("");
-  const [isThinking, setIsThinking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-  }, [messages, isThinking]);
+  }, [messages, isChatRecommendPending]);
 
   const handleSend = (text: string) => {
-    if (!text.trim() || isThinking) return;
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    sendMessage(text);
     setInput("");
-    setIsThinking(true);
-    setTimeout(() => {
-      setIsThinking(false);
-      setMessages((prev) => [...prev, AI_DUMMY_RESPONSE]);
-    }, AI_RESPONSE_DELAY_MS);
   };
 
   return (
@@ -43,16 +31,18 @@ export default function AiPage() {
         {messages.map((message, i) => (
           <ChatMessage key={i} message={message} />
         ))}
-        {isThinking && <ThinkingDots />}
+        {isChatRecommendPending && <ThinkingDots />}
       </div>
 
-      {messages.length === 1 && !isThinking && <QuickPrompts onSelect={handleSend} />}
+      {messages.length === 1 && !isChatRecommendPending && (
+        <QuickPrompts onSelect={handleSend} />
+      )}
 
       <ChatInput
         value={input}
         onChange={setInput}
         onSend={() => handleSend(input)}
-        disabled={isThinking}
+        disabled={isChatRecommendPending}
       />
     </div>
   );
