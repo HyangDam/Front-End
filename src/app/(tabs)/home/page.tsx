@@ -3,6 +3,7 @@ import Link from "next/link";
 import PerfumeCard from "@/components/perfume-card";
 
 import AiPerfumerCta from "./_components/AiPerfumerCta";
+import AiPickSection from "./_components/AiPickSection";
 import ArticleHero from "./_components/ArticleHero";
 import MoodRail from "./_components/MoodRail";
 import SectionHeader from "./_components/SectionHeader";
@@ -18,20 +19,7 @@ export default function HomePage() {
 
       <ArticleHero />
 
-      <section className="pt-[18px]">
-        <SectionHeader
-          title="당신을 위한 AI 픽"
-          subtitle="AI CURATED · PERSONALIZED"
-          action="전체보기"
-        />
-        <div className="no-scrollbar flex gap-2.5 overflow-x-auto px-3.5 pb-1">
-          {HOME_PERFUMES.slice(0, 5).map((perfume) => (
-            <Link key={perfume.id} href={`/perfumes/${perfume.id}`}>
-              <PerfumeCard perfume={perfume} variant="hscroll" />
-            </Link>
-          ))}
-        </div>
-      </section>
+      <AiPickSection />
 
       <section className="pt-[26px]">
         <SectionHeader title="향 분위기로 찾기" subtitle="DISCOVER BY MOOD" />

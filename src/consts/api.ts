@@ -51,4 +51,6 @@ export const API_ENDPOINTS = {
   },
 
   categories: "/categories",
+
+  recommendations: "/recommendations",
 } as const;
