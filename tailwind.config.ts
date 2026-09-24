@@ -7,7 +7,7 @@ export default {
     extend: {
       colors: {
         ivory: {
-          DEFAULT: "#fdf8f1", // T.bg — app background
+          DEFAULT: "#ffffff", // 전체 배경 흰색 요청으로 변경 (기존 #fdf8f1)
           100: "#f5efe3", // T.bg2
           200: "#ede6da", // T.bg3
         },
@@ -36,9 +36,10 @@ export default {
         naver: "#03C75A",
       },
       fontFamily: {
-        serif: ["var(--font-noto-serif-kr)", "serif"], // SER — headings, wordmark
-        sans: ["var(--font-plus-jakarta-sans)", "sans-serif"], // JAK — body text
+        serif: ["Pretendard", "sans-serif"], // 프리텐다드 요청으로 변경 (기존 Noto Serif KR)
+        sans: ["Pretendard", "sans-serif"], // 프리텐다드 요청으로 변경 (기존 Plus Jakarta Sans)
         mono: ['"Courier New"', "Courier", "monospace"], // MONO — eyebrows, labels
+        logo: ["var(--font-noto-serif-kr)", "serif"], // 香談 워드마크 전용, 프리텐다드 전환 대상 아님
       },
     },
   },

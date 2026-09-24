@@ -15,7 +15,7 @@ function DetailHeroImage({ name, brand, imageUrl }: DetailHeroImageProps) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="relative flex h-[260px] items-center justify-center border-b border-border bg-[#fafaf7]">
+    <div className="relative flex h-[260px] items-center justify-center border-b border-border bg-paper">
       {imageUrl && !imgError ? (
         // 백엔드 이미지 도메인이 아직 확정되지 않아 remotePatterns 없이 unoptimized로 사용
         <Image

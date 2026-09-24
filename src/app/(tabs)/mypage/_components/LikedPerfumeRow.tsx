@@ -18,7 +18,7 @@ function LikedPerfumeRow({ perfume, onUnlike }: LikedPerfumeRowProps) {
         href={`/perfumes/${perfume.perfume_id}`}
         className="flex flex-1 cursor-pointer items-center gap-3"
       >
-        <div className="flex h-[54px] w-[50px] flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-[#fafaf7]">
+        <div className="flex h-[54px] w-[50px] flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-paper">
           {perfume.image_url && !hasImageError ? (
             <div className="relative h-full w-full">
               <Image

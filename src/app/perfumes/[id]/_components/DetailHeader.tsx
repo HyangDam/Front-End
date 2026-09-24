@@ -25,7 +25,7 @@ function DetailHeader() {
           />
         </svg>
       </button>
-      <div className="font-serif text-base tracking-[4px] text-charcoal">香談</div>
+      <div className="font-logo text-base tracking-[4px] text-charcoal">香談</div>
       <div className="w-8" />
     </header>
   );

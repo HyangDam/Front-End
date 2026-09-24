@@ -54,7 +54,7 @@ function PerfumeCard({
       }`}
     >
       <div
-        className="relative flex items-center justify-center bg-[#fafaf7]"
+        className="relative flex items-center justify-center bg-paper"
         style={{ height: PERFUME_CARD_IMAGE_HEIGHT[variant] }}
       >
         {perfume.img && !imgError ? (
