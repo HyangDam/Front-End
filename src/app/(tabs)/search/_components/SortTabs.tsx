@@ -12,7 +12,7 @@ type SortTabsProps = {
 
 function SortTabs({ resultCount, sort, onChange, disabledOptions = [] }: SortTabsProps) {
   return (
-    <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+    <div className="flex items-center justify-between border-b border-border py-2.5">
       <span className="font-sans text-[11px] text-muted">{resultCount}개의 향수</span>
       <div className="flex gap-3">
         {SEARCH_SORT_OPTIONS.map((option) => {
