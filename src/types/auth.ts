@@ -1,1 +1,1 @@
-export type SocialProviderT = "kakao" | "google" | "naver";
+export type SocialProviderT = "kakao" | "google";
