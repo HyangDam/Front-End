@@ -47,9 +47,13 @@ function LikedTab({ perfumes, isPending, isError, onRetry, onUnlike }: LikedTabP
     );
   }
 
-  return perfumes.map((perfume) => (
-    <LikedPerfumeRow key={perfume.perfume_id} perfume={perfume} onUnlike={onUnlike} />
-  ));
+  return (
+    <div className="flex flex-col gap-2.5">
+      {perfumes.map((perfume) => (
+        <LikedPerfumeRow key={perfume.perfume_id} perfume={perfume} onUnlike={onUnlike} />
+      ))}
+    </div>
+  );
 }
 
 function MypageContent() {
