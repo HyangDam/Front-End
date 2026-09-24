@@ -7,6 +7,7 @@ import { Suspense } from "react";
 
 import type { MyPerfumeT } from "@/apis/user";
 
+import CabinetFrame from "./CabinetFrame";
 import FitCamera from "./FitCamera";
 import PerfumeBottle from "./PerfumeBottle";
 import ShelfBoard from "./ShelfBoard";
@@ -21,6 +22,12 @@ import {
 type Shelf3DSceneProps = {
   myPerfumes: MyPerfumeT[];
 };
+
+/** 맨 위 병과 천장 사이 여유. 0이면 병이 천장에 닿아 답답하다 */
+const TOP_HEADROOM = 0.18;
+
+/** 천장 마감판 두께. 화면에 담을 때도 중심을 잡을 때도 포함해야 한다 */
+const FRAME_CAP = 0.1;
 
 const chunk = <T,>(items: T[], size: number) =>
   items.reduce<T[][]>((rows, item, index) => {
@@ -40,10 +47,16 @@ function Shelf3DScene({ myPerfumes }: Shelf3DSceneProps) {
    */
   const contentTop = BOTTLE_HEIGHT;
   const contentBottom = -(rows.length - 1) * SHELF_HEIGHT - BOARD_THICKNESS;
-  const offsetY = -(contentTop + contentBottom) / 2;
+
+  /**
+   * 중심은 천장판까지 포함한 전체 높이로 잡는다.
+   * 병과 선반만으로 잡으면 그 위의 천장이 화면 밖으로 밀려난다.
+   */
+  const frameTop = contentTop + TOP_HEADROOM + FRAME_CAP;
+  const offsetY = -(frameTop + contentBottom) / 2;
 
   // 카메라가 얼마나 물러나야 전부 보이는지 계산할 기준
-  const contentHeight = contentTop - contentBottom;
+  const contentHeight = frameTop - contentBottom;
   const contentWidth = PERFUMES_PER_SHELF * SLOT_WIDTH;
 
   return (
@@ -55,10 +68,28 @@ function Shelf3DScene({ myPerfumes }: Shelf3DSceneProps) {
     >
       <FitCamera contentWidth={contentWidth} contentHeight={contentHeight} />
 
-      <ambientLight intensity={1.1} />
-      <directionalLight position={[2, 4, 3]} intensity={0.6} />
+      {/* 전체를 밝히되, 위에서 내려오는 빛을 더해 선반마다 명암이 생기게 한다 */}
+      <ambientLight intensity={0.85} />
+      <directionalLight position={[1.5, 5, 4]} intensity={0.55} />
+      {rows.map((_row, rowIndex) => (
+        <pointLight
+          key={`light-${rowIndex}`}
+          position={[0, offsetY - rowIndex * SHELF_HEIGHT + SHELF_HEIGHT * 0.8, 1.2]}
+          intensity={2.2}
+          distance={3.4}
+          decay={2}
+          color="#fff6ea"
+        />
+      ))}
 
       <group position={[0, offsetY, 0]}>
+        {/* 선반 판과 같은 좌표계에 둬야 옆판이 판 끝에 정확히 맞물린다 */}
+        <CabinetFrame
+          width={contentWidth}
+          top={contentTop + TOP_HEADROOM}
+          bottom={contentBottom}
+        />
+
         {rows.map((row, rowIndex) => {
           const boardY = -rowIndex * SHELF_HEIGHT;
           // 한 줄에 놓인 개수만큼만 가로로 펼쳐 가운데 정렬한다
