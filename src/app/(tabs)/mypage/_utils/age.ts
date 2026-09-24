@@ -8,6 +8,17 @@ export const calculateAge = (birthDate: string | null | undefined) => {
   const [year, month, day] = birthDate.split("-").map(Number);
   if (!year || !month || !day) return null;
 
+  /**
+   * 2020-02-31처럼 달력에 없는 날짜를 걸러낸다.
+   * Date는 넘치는 일수를 다음 달로 넘겨버리므로, 넣은 값이 그대로 나오는지 확인한다.
+   */
+  const birth = new Date(year, month - 1, day);
+  const isRealDate =
+    birth.getFullYear() === year &&
+    birth.getMonth() === month - 1 &&
+    birth.getDate() === day;
+  if (!isRealDate) return null;
+
   const today = new Date();
   const hasHadBirthday =
     today.getMonth() + 1 > month ||
