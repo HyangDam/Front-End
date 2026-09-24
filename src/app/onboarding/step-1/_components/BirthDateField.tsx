@@ -58,9 +58,11 @@ function BirthDateField({ value, minDate, maxDate, onChange }: BirthDateFieldPro
       return;
     }
 
-    // 처음 열 때는 오늘 날짜를 선택해두고 그 달을 보여준다
+    /**
+     * 처음 열 때는 오늘이 있는 달을 보여주되, 값으로 저장하지는 않는다.
+     * 저장해버리면 날짜를 고르지 않고 넘어갔을 때 생년월일이 오늘로 남는다.
+     */
     if (!value) {
-      onChange(today);
       const todayParts = parseDateString(today);
       if (todayParts) setView({ year: todayParts.year, month: todayParts.month });
     }
@@ -157,6 +159,7 @@ function BirthDateField({ value, minDate, maxDate, onChange }: BirthDateFieldPro
               viewYear={view.year}
               viewMonth={view.month}
               selectedDate={value}
+              todayDate={today}
               minDate={minDate}
               maxDate={maxDate}
               onSelect={handleSelectDate}

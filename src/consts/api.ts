@@ -56,4 +56,10 @@ export const API_ENDPOINTS = {
   },
 
   categories: "/categories",
+
+  recommendations: "/recommendations",
+
+  chat: {
+    recommend: "/chat/recommend",
+  },
 } as const;

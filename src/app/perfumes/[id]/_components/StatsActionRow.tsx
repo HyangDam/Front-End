@@ -10,6 +10,7 @@ type StatsActionRowProps = {
   likeCount: number;
   isOwned: boolean;
   isLiked: boolean;
+  isLikeDisabled?: boolean;
   onToggleOwned: () => void;
   onToggleLike: () => void;
 };
@@ -20,6 +21,7 @@ function StatsActionRow({
   likeCount,
   isOwned,
   isLiked,
+  isLikeDisabled = false,
   onToggleOwned,
   onToggleLike,
 }: StatsActionRowProps) {
@@ -63,8 +65,9 @@ function StatsActionRow({
         <button
           type="button"
           onClick={onToggleLike}
+          disabled={isLikeDisabled}
           aria-pressed={isLiked}
-          className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent"
+          className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent transition-opacity disabled:cursor-default disabled:opacity-50"
         >
           <svg
             width="15"

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { useState } from "react";
 
 import { ApiError } from "@/apis/apiError";
+import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 import type { PerfumeReviewT } from "@/types/perfume";
 
 import AccordBars from "./AccordBars";
@@ -21,7 +22,6 @@ import {
   useGetPerfumeReviews,
   usePatchReview,
   usePostReview,
-  useTogglePerfumeLike,
   useTogglePerfumeOwned,
 } from "../_apis/perfume";
 import { getNoteColorMap } from "../_utils/getNoteColorMap";
@@ -44,8 +44,11 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
     usePatchReview(perfumeId);
   const { deleteReviewMutation, isDeleteReviewPending } = useDeleteReview(perfumeId);
 
-  const { postPerfumeLikeMutation, deletePerfumeLikeMutation } =
-    useTogglePerfumeLike(perfumeId);
+  const {
+    isLiked: getIsLiked,
+    toggleLikeMutation,
+    canToggleLike,
+  } = usePerfumeLike();
   const { postMyPerfumeMutation, deleteMyPerfumeMutation } =
     useTogglePerfumeOwned(perfumeId);
 
@@ -108,13 +111,14 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
   const reviewError = editingReview ? patchReviewError : postReviewError;
 
-  const isLiked = perfumeData.is_liked ?? false;
+  const isLiked = getIsLiked(perfumeId);
   const isOwned = perfumeData.is_owned ?? false;
 
-  const handleToggleLike = () => {
-    if (isLiked) deletePerfumeLikeMutation();
-    else postPerfumeLikeMutation();
-  };
+  // 좋아요 목록 갱신 전에도 개수가 바로 바뀐 것처럼 보이도록 상세 조회 시점 값과 비교해 보정한다
+  const wasLiked = perfumeData.is_liked ?? false;
+  const likeCount = perfumeData.like_count + (Number(isLiked) - Number(wasLiked));
+
+  const handleToggleLike = () => toggleLikeMutation(perfumeId);
 
   const handleToggleOwned = () => {
     if (isOwned) deleteMyPerfumeMutation();
@@ -146,9 +150,10 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
         <StatsActionRow
           perfumeId={perfumeId}
           ownedCount={perfumeData.owned_count}
-          likeCount={perfumeData.like_count}
+          likeCount={likeCount}
           isOwned={isOwned}
           isLiked={isLiked}
+          isLikeDisabled={!canToggleLike}
           onToggleOwned={handleToggleOwned}
           onToggleLike={handleToggleLike}
         />
@@ -198,6 +203,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
       <DetailActionBar
         isOwned={isOwned}
         isLiked={isLiked}
+        isLikeDisabled={!canToggleLike}
         onToggleOwned={handleToggleOwned}
         onToggleLike={handleToggleLike}
       />

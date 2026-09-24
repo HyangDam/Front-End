@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient } from "@/apis/apiClient";
-import { deletePerfumeLike, postPerfumeLike } from "@/apis/perfume";
 import { deleteMyPerfume, postMyPerfume } from "@/apis/user";
 import { API_ENDPOINTS } from "@/consts/api";
 import type {
@@ -115,32 +114,6 @@ export const useDeleteReview = (perfumeId: number) => {
     },
   });
   return { deleteReviewMutation, isDeleteReviewPending };
-};
-
-/** 좋아요는 응답에 최신 liked·like_count가 와서 캐시에 바로 반영한다 */
-export const useTogglePerfumeLike = (perfumeId: number) => {
-  const queryClient = useQueryClient();
-  const patchCache = (liked: boolean, likeCount: number) =>
-    queryClient.setQueryData<PerfumeDetailT>(["perfume", perfumeId], (prev) =>
-      prev ? { ...prev, is_liked: liked, like_count: likeCount } : prev,
-    );
-
-  const { mutate: postPerfumeLikeMutation, isPending: isPostPerfumeLikePending } =
-    useMutation({
-      mutationFn: () => postPerfumeLike(perfumeId),
-      onSuccess: (data) => patchCache(data.liked, data.like_count),
-    });
-  const { mutate: deletePerfumeLikeMutation, isPending: isDeletePerfumeLikePending } =
-    useMutation({
-      mutationFn: () => deletePerfumeLike(perfumeId),
-      onSuccess: (data) => patchCache(data.liked, data.like_count),
-    });
-
-  return {
-    postPerfumeLikeMutation,
-    deletePerfumeLikeMutation,
-    isTogglingLike: isPostPerfumeLikePending || isDeletePerfumeLikePending,
-  };
 };
 
 /**

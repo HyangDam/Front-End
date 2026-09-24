@@ -10,6 +10,14 @@
 
   body {
     @apply bg-ivory font-sans text-charcoal antialiased;
+    /* 프리텐다드로 한글을 쓸 때 기본 자간이 넓어 보여 살짝 좁힌다 */
+    letter-spacing: -0.02em;
+  }
+
+  /* 명조에서 프리텐다드로 바뀌며 제목이 본문과 같은 굵기로 보여, 기본 굵기를 올린다 */
+  h1,
+  h2 {
+    @apply font-semibold;
   }
 
   input::placeholder {

@@ -12,7 +12,6 @@ const socialButtonStyles = cva(
       variant: {
         google: "border border-[#E5E7EB] bg-white",
         kakao: "bg-kakao",
-        naver: "bg-naver",
       },
     },
   },
@@ -23,13 +22,12 @@ const labelStyles = cva("font-sans text-sm font-semibold", {
     variant: {
       google: "text-charcoal",
       kakao: "text-[#3A1D1D]",
-      naver: "text-white",
     },
   },
 });
 
 type SocialLoginButtonProps = {
-  variant: "google" | "kakao" | "naver";
+  variant: "google" | "kakao";
   icon: ReactNode;
   label: string;
   onClick: () => void;

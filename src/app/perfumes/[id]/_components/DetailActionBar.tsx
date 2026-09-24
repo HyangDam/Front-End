@@ -3,6 +3,7 @@
 type DetailActionBarProps = {
   isOwned: boolean;
   isLiked: boolean;
+  isLikeDisabled?: boolean;
   onToggleOwned: () => void;
   onToggleLike: () => void;
 };
@@ -10,6 +11,7 @@ type DetailActionBarProps = {
 function DetailActionBar({
   isOwned,
   isLiked,
+  isLikeDisabled = false,
   onToggleOwned,
   onToggleLike,
 }: DetailActionBarProps) {
@@ -18,9 +20,10 @@ function DetailActionBar({
       <button
         type="button"
         onClick={onToggleLike}
+        disabled={isLikeDisabled}
         aria-label="좋아요"
         aria-pressed={isLiked}
-        className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border ${
+        className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border transition-opacity disabled:cursor-default disabled:opacity-50 ${
           isLiked ? "border-rose bg-rose-light" : "border-border bg-transparent"
         }`}
       >
