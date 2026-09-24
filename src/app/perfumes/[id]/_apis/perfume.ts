@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient } from "@/apis/apiClient";
-import { deleteMyPerfume, postMyPerfume } from "@/apis/user";
 import { API_ENDPOINTS } from "@/consts/api";
 import type {
   PerfumeDetailT,
@@ -114,46 +113,6 @@ export const useDeleteReview = (perfumeId: number) => {
     },
   });
   return { deleteReviewMutation, isDeleteReviewPending };
-};
-
-/**
- * 향수장 보유 API는 owned_count를 안 줘서 개수는 invalidate로 다시 불러오되,
- * is_owned는 성공 즉시 캐시에 반영해 버튼이 바로 바뀌게 한다.
- */
-export const useTogglePerfumeOwned = (perfumeId: number) => {
-  const queryClient = useQueryClient();
-  const patchOwned = (isOwned: boolean) => {
-    queryClient.setQueryData<PerfumeDetailT>(["perfume", perfumeId], (prev) =>
-      prev ? { ...prev, is_owned: isOwned } : prev,
-    );
-    queryClient.invalidateQueries({ queryKey: ["perfume", perfumeId] });
-  };
-
-  const {
-    mutate: postMyPerfumeMutation,
-    isPending: isPostMyPerfumePending,
-    error: postMyPerfumeError,
-  } = useMutation({
-    mutationFn: () => postMyPerfume({ perfume_id: perfumeId }),
-    onSuccess: () => patchOwned(true),
-    onError: (error) => console.error("향수장 추가 실패", error),
-  });
-  const {
-    mutate: deleteMyPerfumeMutation,
-    isPending: isDeleteMyPerfumePending,
-    error: deleteMyPerfumeError,
-  } = useMutation({
-    mutationFn: () => deleteMyPerfume(perfumeId),
-    onSuccess: () => patchOwned(false),
-    onError: (error) => console.error("향수장 삭제 실패", error),
-  });
-
-  return {
-    postMyPerfumeMutation,
-    deleteMyPerfumeMutation,
-    isTogglingOwned: isPostMyPerfumePending || isDeleteMyPerfumePending,
-    ownedError: postMyPerfumeError ?? deleteMyPerfumeError,
-  };
 };
 
 export const getPerfumePriceComparison = (perfumeId: number) =>

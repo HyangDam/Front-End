@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { useState } from "react";
 
 import { ApiError } from "@/apis/apiError";
+import { useMyPerfume } from "@/hooks/useMyPerfume";
 import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 import type { PerfumeReviewT } from "@/types/perfume";
 
@@ -22,7 +23,6 @@ import {
   useGetPerfumeReviews,
   usePatchReview,
   usePostReview,
-  useTogglePerfumeOwned,
 } from "../_apis/perfume";
 import { getNoteColorMap } from "../_utils/getNoteColorMap";
 import { toFallbackNotes } from "../_utils/toFallbackNotes";
@@ -45,8 +45,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { deleteReviewMutation, isDeleteReviewPending } = useDeleteReview(perfumeId);
 
   const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
-  const { postMyPerfumeMutation, deleteMyPerfumeMutation } =
-    useTogglePerfumeOwned(perfumeId);
+  const { isOwned: getIsOwned, toggleOwnedMutation, canToggleOwned } = useMyPerfume();
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
 
@@ -108,18 +107,16 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const reviewError = editingReview ? patchReviewError : postReviewError;
 
   const isLiked = getIsLiked(perfumeId);
-  const isOwned = perfumeData.is_owned ?? false;
+  const isOwned = getIsOwned(perfumeId);
 
-  // 좋아요 목록 갱신 전에도 개수가 바로 바뀐 것처럼 보이도록 상세 조회 시점 값과 비교해 보정한다
+  // 좋아요·향수장 목록 갱신 전에도 개수가 바로 바뀐 것처럼 보이도록 상세 조회 시점 값과 비교해 보정한다
   const wasLiked = perfumeData.is_liked ?? false;
   const likeCount = perfumeData.like_count + (Number(isLiked) - Number(wasLiked));
+  const wasOwned = perfumeData.is_owned ?? false;
+  const ownedCount = perfumeData.owned_count + (Number(isOwned) - Number(wasOwned));
 
   const handleToggleLike = () => toggleLikeMutation(perfumeId);
-
-  const handleToggleOwned = () => {
-    if (isOwned) deleteMyPerfumeMutation();
-    else postMyPerfumeMutation();
-  };
+  const handleToggleOwned = () => toggleOwnedMutation(perfumeId);
 
   return (
     <div className="flex h-full flex-col bg-paper">
@@ -145,11 +142,12 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
         <StatsActionRow
           perfumeId={perfumeId}
-          ownedCount={perfumeData.owned_count}
+          ownedCount={ownedCount}
           likeCount={likeCount}
           isOwned={isOwned}
           isLiked={isLiked}
           isLikeDisabled={!canToggleLike}
+          isOwnedDisabled={!canToggleOwned}
           onToggleOwned={handleToggleOwned}
           onToggleLike={handleToggleLike}
         />
@@ -200,6 +198,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
         isOwned={isOwned}
         isLiked={isLiked}
         isLikeDisabled={!canToggleLike}
+        isOwnedDisabled={!canToggleOwned}
         onToggleOwned={handleToggleOwned}
         onToggleLike={handleToggleLike}
       />
