@@ -1,7 +1,8 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { ApiError } from "@/apis/apiError";
 import { useMyPerfume } from "@/hooks/useMyPerfume";
@@ -45,7 +46,22 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { deleteReviewMutation, isDeleteReviewPending } = useDeleteReview(perfumeId);
 
   const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
-  const { isOwned: getIsOwned, toggleOwnedMutation, canToggleOwned } = useMyPerfume();
+  const {
+    isOwned: getIsOwned,
+    toggleOwnedMutation,
+    canToggleOwned,
+    isToggleOwnedPending,
+  } = useMyPerfume();
+
+  const queryClient = useQueryClient();
+  const wasTogglingOwnedRef = useRef(false);
+  useEffect(() => {
+    // 향수장 목록만 갱신되고 상세의 can_write_review·is_owned는 그대로 남아있어 직접 새로고침한다
+    if (wasTogglingOwnedRef.current && !isToggleOwnedPending) {
+      queryClient.invalidateQueries({ queryKey: ["perfume", perfumeId] });
+    }
+    wasTogglingOwnedRef.current = isToggleOwnedPending;
+  }, [isToggleOwnedPending, perfumeId, queryClient]);
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
 
