@@ -20,6 +20,8 @@ export type PostSocialLoginResponseT = {
   is_new_user: boolean;
   /** 이름 · 성별 · 생년월일 등 기본 정보를 아직 입력하지 않은 상태 */
   profile_required: boolean;
+  /** 취향 온보딩(보유 향수 · 선호 브랜드 · 향 계열)까지 마쳤는지 */
+  onboarding_completed: boolean;
   user: AuthUserT;
 };
 
