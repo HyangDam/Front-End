@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppStore } from "@/hooks/useAppStore";
+import { useMyPerfume } from "@/hooks/useMyPerfume";
 import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 
 type DetailActionBarProps = {
@@ -8,14 +8,14 @@ type DetailActionBarProps = {
 };
 
 function DetailActionBar({ perfumeId }: DetailActionBarProps) {
-  const { owned, toggleOwned } = useAppStore();
   const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
+  const { isOwned: getIsOwned, toggleOwnedMutation, canToggleOwned } = useMyPerfume();
 
   const isLiked = getIsLiked(perfumeId);
-  const isOwned = owned.includes(perfumeId);
+  const isOwned = getIsOwned(perfumeId);
 
   const handleToggleLike = () => toggleLikeMutation(perfumeId);
-  const handleToggleOwned = () => toggleOwned(perfumeId);
+  const handleToggleOwned = () => toggleOwnedMutation(perfumeId);
 
   return (
     <div className="flex flex-shrink-0 gap-2.5 border-t border-border bg-paper px-4 py-[18px]">
@@ -43,8 +43,9 @@ function DetailActionBar({ perfumeId }: DetailActionBarProps) {
       <button
         type="button"
         onClick={handleToggleOwned}
+        disabled={!canToggleOwned}
         aria-pressed={isOwned}
-        className={`h-[46px] flex-1 cursor-pointer rounded-[23px] font-sans text-[13px] font-semibold ${
+        className={`h-[46px] flex-1 cursor-pointer rounded-[23px] font-sans text-[13px] font-semibold transition-opacity disabled:cursor-default disabled:opacity-50 ${
           isOwned
             ? "border border-border bg-ivory-200 text-muted"
             : "border-none bg-sage text-white"
