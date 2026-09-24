@@ -38,8 +38,26 @@ export default {
         naver: "#03C75A",
       },
       fontFamily: {
-        serif: ["Pretendard Variable", "Pretendard", "sans-serif"], // 프리텐다드 요청으로 변경 (기존 Noto Serif KR)
-        sans: ["Pretendard Variable", "Pretendard", "sans-serif"], // 프리텐다드 요청으로 변경 (기존 Plus Jakarta Sans)
+        serif: [
+          "Pretendard Variable",
+          "Pretendard",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "sans-serif",
+        ], // 프리텐다드 요청으로 변경 (기존 Noto Serif KR)
+        sans: [
+          "Pretendard Variable",
+          "Pretendard",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "sans-serif",
+        ], // 프리텐다드 요청으로 변경 (기존 Plus Jakarta Sans)
         mono: ['"Courier New"', "Courier", "monospace"], // MONO — eyebrows, labels
         logo: ["var(--font-noto-serif-kr)", "serif"], // 香談 워드마크 전용, 프리텐다드 전환 대상 아님
       },
