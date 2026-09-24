@@ -1,7 +1,9 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
+import { getMe } from "@/apis/user";
 import ConfirmDialog from "@/components/confirm-dialog";
 import { useAuthStore } from "@/hooks/useAuthStore";
 import type { PerfumeReviewT } from "@/types/perfume";
@@ -25,6 +27,9 @@ function ReviewList({
 }: ReviewListProps) {
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null);
   const sessionUser = useAuthStore((state) => state.user);
+  // 프로필에서 바꾼 최신 닉네임을 반영해야 해서 로그인 스냅샷 대신 서버 값을 본다
+  const { data: meData } = useQuery({ queryKey: ["me"], queryFn: getMe });
+  const myDisplayName = meData?.nickname ?? meData?.name ?? sessionUser?.name;
 
   return (
     <div className="border-t border-border px-[22px] pb-[100px]">
@@ -60,7 +65,7 @@ function ReviewList({
               <div className="mb-1.5 flex justify-between">
                 <span className="font-sans text-xs font-semibold text-charcoal">
                   {isMine
-                    ? (sessionUser?.name ?? review.nickname ?? `사용자 ${review.user_id}`)
+                    ? (myDisplayName ?? review.nickname ?? `사용자 ${review.user_id}`)
                     : (review.nickname ?? `사용자 ${review.user_id}`)}
                 </span>
                 <span className="text-[11px] text-gold">{"★".repeat(review.rating)}</span>
