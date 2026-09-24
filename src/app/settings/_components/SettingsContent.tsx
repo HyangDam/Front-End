@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useState } from "react";
 
 import chevronRightIcon from "@/assets/icons/chevron-right.svg";
+import ConfirmDialog from "@/components/confirm-dialog";
 import { useAuthStore } from "@/hooks/useAuthStore";
 
 import { useAccountActions } from "../_hooks/useAccountActions";
-import ConfirmDialog from "./ConfirmDialog";
 
 type OpenDialogT = "logout" | "withdraw" | null;
 

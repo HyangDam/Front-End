@@ -2,28 +2,29 @@
 
 import { useState } from "react";
 
+import ConfirmDialog from "@/components/confirm-dialog";
+import { useAuthStore } from "@/hooks/useAuthStore";
 import type { PerfumeReviewT } from "@/types/perfume";
 
 type ReviewListProps = {
   reviews: PerfumeReviewT[];
   canWriteReview?: boolean | null;
-  myReviewId?: number | null;
   isDeletingReview: boolean;
   onWriteReview: () => void;
   onEditReview: (review: PerfumeReviewT) => void;
-  onDeleteReview: (reviewId: number) => void;
+  onDeleteReview: (reviewId: number, onSuccess: () => void) => void;
 };
 
 function ReviewList({
   reviews,
   canWriteReview,
-  myReviewId,
   isDeletingReview,
   onWriteReview,
   onEditReview,
   onDeleteReview,
 }: ReviewListProps) {
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null);
+  const sessionUser = useAuthStore((state) => state.user);
 
   return (
     <div className="border-t border-border px-[22px] pb-[100px]">
@@ -31,7 +32,7 @@ function ReviewList({
         <div className="font-mono text-[10px] uppercase tracking-[1.5px] text-muted">
           Reviews
         </div>
-        {canWriteReview && !myReviewId && (
+        {canWriteReview && (
           <button
             type="button"
             onClick={onWriteReview}
@@ -48,7 +49,8 @@ function ReviewList({
         </p>
       ) : (
         reviews.map((review, i) => {
-          const isMine = review.review_id === myReviewId;
+          // 백엔드 my_review_id가 항상 null이라 세션 유저 id로 직접 판별한다
+          const isMine = review.user_id === sessionUser?.user_id;
 
           return (
             <div
@@ -57,7 +59,9 @@ function ReviewList({
             >
               <div className="mb-1.5 flex justify-between">
                 <span className="font-sans text-xs font-semibold text-charcoal">
-                  {review.nickname ?? `사용자 ${review.user_id}`}
+                  {isMine
+                    ? (sessionUser?.name ?? review.nickname ?? `사용자 ${review.user_id}`)
+                    : (review.nickname ?? `사용자 ${review.user_id}`)}
                 </span>
                 <span className="text-[11px] text-gold">{"★".repeat(review.rating)}</span>
               </div>
@@ -74,38 +78,32 @@ function ReviewList({
                   >
                     수정
                   </button>
-                  {confirmingDeleteId === review.review_id ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => onDeleteReview(review.review_id)}
-                        disabled={isDeletingReview}
-                        className="cursor-pointer border-none bg-transparent font-sans text-[11px] text-error disabled:opacity-50"
-                      >
-                        {isDeletingReview ? "삭제 중..." : "정말 삭제할까요?"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmingDeleteId(null)}
-                        className="cursor-pointer border-none bg-transparent font-sans text-[11px] text-muted"
-                      >
-                        취소
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setConfirmingDeleteId(review.review_id)}
-                      className="cursor-pointer border-none bg-transparent font-sans text-[11px] text-muted"
-                    >
-                      삭제
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingDeleteId(review.review_id)}
+                    className="cursor-pointer border-none bg-transparent font-sans text-[11px] text-muted"
+                  >
+                    삭제
+                  </button>
                 </div>
               )}
             </div>
           );
         })
+      )}
+
+      {confirmingDeleteId !== null && (
+        <ConfirmDialog
+          title="리뷰를 삭제할까요?"
+          description="삭제한 리뷰는 복구할 수 없어요."
+          confirmLabel="삭제"
+          destructive
+          isPending={isDeletingReview}
+          onConfirm={() =>
+            onDeleteReview(confirmingDeleteId, () => setConfirmingDeleteId(null))
+          }
+          onCancel={() => setConfirmingDeleteId(null)}
+        />
       )}
     </div>
   );

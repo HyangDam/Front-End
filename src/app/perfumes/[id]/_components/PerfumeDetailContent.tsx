@@ -186,11 +186,12 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
         <ReviewList
           reviews={perfumeReviewsData?.results ?? []}
           canWriteReview={perfumeData.can_write_review}
-          myReviewId={perfumeData.my_review_id}
           isDeletingReview={isDeleteReviewPending}
           onWriteReview={handleWriteReview}
           onEditReview={handleEditReview}
-          onDeleteReview={(reviewId) => deleteReviewMutation(reviewId)}
+          onDeleteReview={(reviewId, onSuccess) =>
+            deleteReviewMutation(reviewId, { onSuccess })
+          }
         />
       </main>
 
