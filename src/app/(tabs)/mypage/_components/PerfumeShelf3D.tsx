@@ -1,8 +1,25 @@
-import Image from "next/image";
-import Link from "next/link";
+"use client";
+
+import dynamic from "next/dynamic";
+import { useState, useSyncExternalStore } from "react";
 
 import type { MyPerfumeT } from "@/apis/user";
 import ErrorState from "@/components/error-state";
+
+import PerfumeShelfGrid from "./PerfumeShelfGrid";
+import ShelfViewToggle from "./ShelfViewToggle";
+import type { ShelfViewT } from "./ShelfViewToggle";
+import ShelfErrorBoundary from "./shelf-3d/ShelfErrorBoundary";
+
+/** three.js는 무거워서 마이페이지를 열 때만 내려받는다 */
+const Shelf3DScene = dynamic(() => import("./shelf-3d/Shelf3DScene"), {
+  ssr: false,
+  loading: () => (
+    <p className="py-12 text-center font-sans text-[13px] text-muted">
+      진열장을 준비하고 있어요
+    </p>
+  ),
+});
 
 type PerfumeShelf3DProps = {
   myPerfumes: MyPerfumeT[];
@@ -11,13 +28,40 @@ type PerfumeShelf3DProps = {
   onRetry: () => void;
 };
 
-/** 3D 진열장은 준비 중이라, 담아둔 향수를 우선 격자로 보여준다 */
+/** WebGL을 못 쓰는 기기에서는 3D를 아예 시도하지 않는다. 확인 비용이 있어 한 번만 재본다 */
+let webGLSupport: boolean | null = null;
+
+const canUseWebGL = () => {
+  if (webGLSupport !== null) return webGLSupport;
+
+  try {
+    const canvas = document.createElement("canvas");
+    webGLSupport = Boolean(canvas.getContext("webgl2") ?? canvas.getContext("webgl"));
+  } catch {
+    webGLSupport = false;
+  }
+  return webGLSupport;
+};
+
+const subscribeNever = () => () => {};
+
+/** 서버에서는 WebGL을 판단할 수 없어, 클라이언트로 넘어온 뒤에만 3D를 켠다 */
+const useIsClient = () =>
+  useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
+
 function PerfumeShelf3D({
   myPerfumes,
   isPending,
   isError,
   onRetry,
 }: PerfumeShelf3DProps) {
+  const isClient = useIsClient();
+  const [view, setView] = useState<ShelfViewT>("shelf3d");
+
   if (isPending) {
     return (
       <p className="py-12 text-center font-sans text-[13px] text-muted">
@@ -43,36 +87,27 @@ function PerfumeShelf3D({
     );
   }
 
+  // 3D를 못 그리는 기기에서는 전환할 것이 없어 목록만 보여준다
+  const canShow3D = isClient && canUseWebGL();
+  if (!canShow3D) return <PerfumeShelfGrid myPerfumes={myPerfumes} />;
+
   return (
-    <div className="grid grid-cols-3 gap-2.5">
-      {myPerfumes.map(({ id, perfume }) => (
-        <Link
-          key={id}
-          href={`/perfumes/${perfume.perfume_id}`}
-          className="flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border border-border bg-paper px-2 py-3"
-        >
-          <div className="relative h-14 w-full">
-            {perfume.image_url ? (
-              <Image
-                src={perfume.image_url}
-                alt={perfume.name}
-                fill
-                unoptimized
-                sizes="80px"
-                className="object-contain"
-              />
-            ) : (
-              <span className="flex h-full items-center justify-center text-2xl">🧴</span>
-            )}
+    <div className="flex h-full flex-col">
+      <ShelfViewToggle view={view} onChange={setView} />
+
+      {view === "grid" ? (
+        <PerfumeShelfGrid myPerfumes={myPerfumes} />
+      ) : (
+        <ShelfErrorBoundary fallback={<PerfumeShelfGrid myPerfumes={myPerfumes} />}>
+          {/* 토글과 안내 문구를 뺀 나머지를 차지해, 화면에 딱 맞고 스크롤이 생기지 않게 한다 */}
+          <div className="min-h-[260px] w-full flex-1 overflow-hidden rounded-2xl bg-white">
+            <Shelf3DScene myPerfumes={myPerfumes} />
           </div>
-          <p className="w-full truncate text-center font-mono text-[8px] uppercase tracking-[1px] text-muted">
-            {perfume.brand}
+          <p className="mt-2 text-center font-sans text-[11px] text-muted-light">
+            드래그해 둘러보고 두 손가락으로 확대할 수 있어요
           </p>
-          <p className="w-full truncate text-center font-serif text-[11px] text-charcoal">
-            {perfume.name}
-          </p>
-        </Link>
-      ))}
+        </ShelfErrorBoundary>
+      )}
     </div>
   );
 }

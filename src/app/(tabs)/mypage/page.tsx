@@ -8,8 +8,8 @@ import ProfileSummary from "./_components/ProfileSummary";
 
 export default function MyPage() {
   return (
-    <div className="bg-ivory">
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-ivory px-4 py-3">
+    <div className="flex h-full flex-col bg-ivory">
+      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-ivory px-4 py-3">
         <h1 className="font-serif text-lg text-charcoal">마이</h1>
         <Link
           href="/settings"
@@ -20,7 +20,7 @@ export default function MyPage() {
         </Link>
       </header>
 
-      <main className="pt-4">
+      <main className="flex min-h-0 flex-1 flex-col pt-4">
         <ProfileSummary />
         <MypageContent />
       </main>

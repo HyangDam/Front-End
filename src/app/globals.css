@@ -20,6 +20,16 @@
     @apply font-semibold;
   }
 
+  /* 모바일 앱처럼 보이도록 스크롤바를 숨긴다. 스크롤 동작 자체는 그대로다 */
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
   input::placeholder {
     @apply text-muted-light;
   }
