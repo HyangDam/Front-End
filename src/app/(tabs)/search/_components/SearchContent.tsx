@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import PerfumeCard from "@/components/perfume-card";
-import { useAppStore } from "@/hooks/useAppStore";
+import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 import type { PerfumeSummaryT, PerfumeT } from "@/types/perfume";
 
 import CategoryFilterSheet from "./CategoryFilterSheet";
@@ -38,7 +38,7 @@ function SearchContent() {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [sort, setSort] = useState<SearchSortOptionT>(SEARCH_SORT_OPTIONS[0]);
   const debouncedQuery = useDebouncedValue(query, 300);
-  const { likes, toggleLike } = useAppStore();
+  const { isLiked, toggleLikeMutation } = usePerfumeLike();
 
   const category =
     filters.length === 0
@@ -143,8 +143,8 @@ function SearchContent() {
                     <PerfumeCard
                       perfume={perfume}
                       variant="compact"
-                      liked={likes.includes(perfume.id)}
-                      onLike={toggleLike}
+                      liked={isLiked(perfume.id)}
+                      onLike={toggleLikeMutation}
                     />
                   </Link>
                 );

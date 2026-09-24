@@ -4,8 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { deletePerfumeLike } from "@/apis/perfume";
 import { getLikedPerfumes } from "@/apis/user";
-
-const LIKED_PERFUMES_KEY = ["likedPerfumes"];
+// 상세·검색에서 누른 좋아요와 같은 캐시를 보도록 키를 공유한다
+import { LIKED_PERFUMES_KEY } from "@/hooks/usePerfumeLike";
 
 export const useGetLikedPerfumes = () => {
   const queryClient = useQueryClient();

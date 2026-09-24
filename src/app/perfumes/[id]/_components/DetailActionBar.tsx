@@ -1,17 +1,20 @@
 "use client";
 
 import { useAppStore } from "@/hooks/useAppStore";
+import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 
 type DetailActionBarProps = {
   perfumeId: number;
 };
 
 function DetailActionBar({ perfumeId }: DetailActionBarProps) {
-  const { likes, owned, toggleLike, toggleOwned } = useAppStore();
-  const isLiked = likes.includes(perfumeId);
+  const { owned, toggleOwned } = useAppStore();
+  const { isLiked: getIsLiked, toggleLikeMutation } = usePerfumeLike();
+
+  const isLiked = getIsLiked(perfumeId);
   const isOwned = owned.includes(perfumeId);
 
-  const handleToggleLike = () => toggleLike(perfumeId);
+  const handleToggleLike = () => toggleLikeMutation(perfumeId);
   const handleToggleOwned = () => toggleOwned(perfumeId);
 
   return (
