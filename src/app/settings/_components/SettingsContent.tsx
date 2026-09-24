@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 import chevronRightIcon from "@/assets/icons/chevron-right.svg";
+import ConfirmDialog from "@/components/confirm-dialog";
 import { useAuthStore } from "@/hooks/useAuthStore";
 
 import { useAccountActions } from "../_hooks/useAccountActions";
-import ConfirmDialog from "./ConfirmDialog";
 
 type OpenDialogT = "logout" | "withdraw" | null;
 
@@ -29,19 +30,37 @@ function SettingsContent() {
   return (
     <main className="flex-1 overflow-y-auto px-4 py-5">
       <section className="mb-6">
-        <h2 className="mb-2.5 font-mono text-[10px] uppercase tracking-[1.2px] text-muted">
-          Account
-        </h2>
+        <h2 className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">계정</h2>
         <div className="rounded-xl border border-border bg-paper px-4 py-3.5">
           <p className="mb-0.5 font-sans text-[11px] text-muted">로그인한 계정</p>
           <p className="font-sans text-[13px] text-charcoal">{user?.email ?? "-"}</p>
         </div>
       </section>
 
-      <section>
-        <h2 className="mb-2.5 font-mono text-[10px] uppercase tracking-[1.2px] text-muted">
-          Manage
+      <section className="mb-6">
+        <h2 className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">
+          약관 및 정책
         </h2>
+        <div className="overflow-hidden rounded-xl border border-border bg-paper">
+          <Link
+            href="/terms"
+            className="flex w-full cursor-pointer items-center justify-between border-b border-border px-4 py-3.5 font-sans text-[13px] text-charcoal"
+          >
+            이용약관
+            <Image src={chevronRightIcon} alt="" width={11} height={11} />
+          </Link>
+          <Link
+            href="/privacy"
+            className="flex w-full cursor-pointer items-center justify-between px-4 py-3.5 font-sans text-[13px] text-charcoal"
+          >
+            개인정보 처리방침
+            <Image src={chevronRightIcon} alt="" width={11} height={11} />
+          </Link>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-2.5 font-sans text-[11px] tracking-[0.5px] text-muted">관리</h2>
         <div className="overflow-hidden rounded-xl border border-border bg-paper">
           <button
             type="button"

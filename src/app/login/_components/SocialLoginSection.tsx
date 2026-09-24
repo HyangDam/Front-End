@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import Script from "next/script";
 
 import { SOCIAL_PROVIDERS } from "../_consts/socialProviders.const";
@@ -38,6 +39,18 @@ function SocialLoginSection() {
           {postSocialLoginError.message}
         </p>
       )}
+
+      <p className="mt-6 text-center font-sans text-[11px] leading-[1.8] text-muted-light">
+        가입 시{" "}
+        <Link href="/terms" className="cursor-pointer underline">
+          이용약관
+        </Link>
+        {" 및 "}
+        <Link href="/privacy" className="cursor-pointer underline">
+          개인정보 처리방침
+        </Link>
+        에 동의하게 됩니다.
+      </p>
     </>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import PerfumeCard from "@/components/perfume-card";
-import { useAppStore } from "@/hooks/useAppStore";
+import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 import type { PerfumeSummaryT, PerfumeT } from "@/types/perfume";
 
 import CategoryFilterSheet from "./CategoryFilterSheet";
@@ -13,6 +14,7 @@ import SortTabs from "./SortTabs";
 import { useDebouncedValue } from "../_hooks/useDebouncedValue";
 import { useGetPerfumeSearch } from "../_hooks/useGetPerfumeSearch";
 import {
+  parseCategoryParam,
   SEARCH_FAMILY_TO_CATEGORY,
   SEARCH_SORT_OPTIONS,
   SEARCH_SORT_TO_PARAM,
@@ -33,12 +35,15 @@ const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => ({
 });
 
 function SearchContent() {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<SearchNonAllFamilyFilterT[]>([]);
+  const [filters, setFilters] = useState<SearchNonAllFamilyFilterT[]>(() =>
+    parseCategoryParam(searchParams.get("category")),
+  );
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [sort, setSort] = useState<SearchSortOptionT>(SEARCH_SORT_OPTIONS[0]);
   const debouncedQuery = useDebouncedValue(query, 300);
-  const { likes, toggleLike } = useAppStore();
+  const { isLiked, toggleLikeMutation } = usePerfumeLike();
 
   const category =
     filters.length === 0
@@ -90,7 +95,7 @@ function SearchContent() {
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
               <path
                 d="M6 9L12 15L18 9"
-                stroke={filters.length > 0 ? "#ffffff" : "#1a1814"}
+                stroke={filters.length > 0 ? "#ffffff" : "#191b1f"}
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -143,8 +148,8 @@ function SearchContent() {
                     <PerfumeCard
                       perfume={perfume}
                       variant="compact"
-                      liked={likes.includes(perfume.id)}
-                      onLike={toggleLike}
+                      liked={isLiked(perfume.id)}
+                      onLike={toggleLikeMutation}
                     />
                   </Link>
                 );

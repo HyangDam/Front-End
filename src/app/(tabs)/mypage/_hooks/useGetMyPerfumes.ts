@@ -3,6 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getMyPerfumes } from "@/apis/user";
+// 상세 화면에서 담은 결과와 같은 캐시를 보도록 키를 공유한다
+import { MY_PERFUMES_KEY } from "@/hooks/useMyPerfume";
 
 export const useGetMyPerfumes = () => {
   const {
@@ -11,7 +13,7 @@ export const useGetMyPerfumes = () => {
     isError: isMyPerfumesError,
     refetch: refetchMyPerfumes,
   } = useQuery({
-    queryKey: ["myPerfumes"],
+    queryKey: MY_PERFUMES_KEY,
     queryFn: getMyPerfumes,
   });
 

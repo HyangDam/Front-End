@@ -54,7 +54,7 @@ function PerfumeCard({
       }`}
     >
       <div
-        className="relative flex items-center justify-center bg-[#fafaf7]"
+        className="relative flex items-center justify-center bg-paper"
         style={{ height: PERFUME_CARD_IMAGE_HEIGHT[variant] }}
       >
         {perfume.img && !imgError ? (
@@ -117,7 +117,7 @@ function PerfumeCard({
         }`}
       >
         <div
-          className={`font-mono uppercase text-muted ${
+          className={`truncate font-mono uppercase text-muted ${
             variant === "default"
               ? "mb-1 text-[8px] tracking-[1.5px]"
               : "mb-0.5 text-[7px] tracking-[0.8px]"

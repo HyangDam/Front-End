@@ -8,6 +8,7 @@ type CalendarGridProps = {
   viewYear: number;
   viewMonth: number;
   selectedDate: string;
+  todayDate: string;
   minDate: string;
   maxDate: string;
   onSelect: (value: string) => void;
@@ -17,6 +18,7 @@ function CalendarGrid({
   viewYear,
   viewMonth,
   selectedDate,
+  todayDate,
   minDate,
   maxDate,
   onSelect,
@@ -41,6 +43,8 @@ function CalendarGrid({
           const value = toDateString(viewYear, viewMonth, day);
           const disabled = value < minDate || value > maxDate;
           const selected = value === selectedDate;
+          // 선택값이 아니라 "오늘이 여기"라는 위치 표시일 뿐이라 테두리로만 구분한다
+          const isToday = !selected && value === todayDate;
 
           return (
             <button
@@ -55,6 +59,7 @@ function CalendarGrid({
                 !disabled &&
                   !selected &&
                   "cursor-pointer text-charcoal hover:bg-ivory-200",
+                isToday && "ring-1 ring-inset ring-rose/40",
                 selected && "cursor-pointer bg-rose font-semibold text-white",
               )}
             >

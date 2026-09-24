@@ -10,6 +10,24 @@
 
   body {
     @apply bg-ivory font-sans text-charcoal antialiased;
+    /* 프리텐다드로 한글을 쓸 때 기본 자간이 넓어 보여 살짝 좁힌다 */
+    letter-spacing: -0.02em;
+  }
+
+  /* 명조에서 프리텐다드로 바뀌며 제목이 본문과 같은 굵기로 보여, 기본 굵기를 올린다 */
+  h1,
+  h2 {
+    @apply font-semibold;
+  }
+
+  /* 모바일 앱처럼 보이도록 스크롤바를 숨긴다. 스크롤 동작 자체는 그대로다 */
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  *::-webkit-scrollbar {
+    display: none;
   }
 
   input::placeholder {

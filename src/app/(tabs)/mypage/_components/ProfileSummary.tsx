@@ -9,6 +9,7 @@ import profileIcon from "@/assets/icons/profile.svg";
 import ErrorState from "@/components/error-state";
 
 import { useGetMyProfile } from "../_hooks/useGetMyProfile";
+import { calculateAge } from "../_utils/age";
 
 const FALLBACK_NAME = "향기로운 손님";
 
@@ -27,7 +28,9 @@ function ProfileSummary() {
   const [hasImageError, setHasImageError] = useState(false);
 
   const displayName = me?.nickname || me?.name || FALLBACK_NAME;
-  const subLabel = buildSubLabel(me?.age ?? null, preferredScents);
+  // 서버 age는 0으로 오는 경우가 있어, 생년월일이 있으면 그걸 우선한다
+  const age = calculateAge(me?.birth_date) ?? (me?.age || null);
+  const subLabel = buildSubLabel(age, preferredScents);
 
   // 조회 실패를 기본 이름("향기로운 손님")으로 덮어쓰지 않는다
   if (isMeError) {

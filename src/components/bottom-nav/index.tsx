@@ -10,7 +10,8 @@ function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex h-[72px] flex-shrink-0 border-t border-border bg-ivory">
+    // iOS 홈 인디케이터에 탭이 가리지 않도록 안전영역만큼 아래를 띄운다
+    <nav className="flex h-[calc(72px+env(safe-area-inset-bottom))] flex-shrink-0 border-t border-border bg-ivory pb-[env(safe-area-inset-bottom)]">
       {BOTTOM_NAV_TABS.map((tab) => {
         const active = pathname.startsWith(tab.href);
         const activeColor = BOTTOM_NAV_ROSE_TABS.includes(tab.id)

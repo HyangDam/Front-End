@@ -7,6 +7,10 @@ export type PerfumeSummaryT = {
   image_url?: string | null;
   like_count?: number;
   category?: string | null;
+  /** 서버가 한글 표기를 따로 내려주는 필드. 노트는 이쪽만 한글이라 우선 사용한다 */
+  display_name?: string | null;
+  display_brand?: string | null;
+  display_notes?: string | null;
 };
 
 export type PerfumeT = {
