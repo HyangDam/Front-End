@@ -95,7 +95,7 @@ function SearchContent() {
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none">
               <path
                 d="M6 9L12 15L18 9"
-                stroke={filters.length > 0 ? "#ffffff" : "#1a1814"}
+                stroke={filters.length > 0 ? "#ffffff" : "#191b1f"}
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"

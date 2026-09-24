@@ -29,11 +29,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${notoSerifKr.variable} h-full bg-white`}>
+    <html lang="ko" className={`${notoSerifKr.variable} h-full bg-basement`}>
       <head>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        {/* 한글 전체를 받지 않고 쓰인 글자만 내려받는 서브셋 버전 */}
         <link
           rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
       </head>
       {/* 모바일 주소창에 가려지지 않도록 100vh 대신 동적 뷰포트 높이(dvh)를 쓴다 */}
