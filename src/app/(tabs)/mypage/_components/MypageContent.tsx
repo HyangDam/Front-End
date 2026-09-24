@@ -13,7 +13,7 @@ import PerfumeShelf3D from "./PerfumeShelf3D";
 type MypageTab = "shelf" | "liked";
 
 const MYPAGE_TABS: { id: MypageTab; label: string }[] = [
-  { id: "shelf", label: "나의 향수 저장소" },
+  { id: "shelf", label: "나의 향수장" },
   { id: "liked", label: "좋아요" },
 ];
 
