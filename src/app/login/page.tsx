@@ -7,7 +7,7 @@ export default function LoginPage() {
         <p className="mb-[18px] font-mono text-[10px] uppercase tracking-[3px] text-muted">
           Perfume Finder
         </p>
-        <h1 className="mb-4 font-serif text-[58px] leading-none tracking-[8px] text-charcoal">
+        <h1 className="mb-4 font-logo text-[58px] leading-none tracking-[8px] text-charcoal">
           香談
         </h1>
         <div className="flex items-center justify-center gap-2.5">
