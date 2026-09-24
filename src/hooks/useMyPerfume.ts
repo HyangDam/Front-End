@@ -14,6 +14,14 @@ export const MY_PERFUMES_KEY = ["myPerfumes"];
  */
 const inFlightPerfumeIds = new Set<number>();
 
+type ToggleOwnedResultT =
+  | {
+      action: "added";
+      perfumeId: number;
+      myPerfume: Awaited<ReturnType<typeof postMyPerfume>>;
+    }
+  | { action: "removed"; perfumeId: number };
+
 /**
  * 향수장 보유 상태 조회 + 토글.
  * 상세와 마이페이지가 같은 서버 상태를 보도록 쿼리 키를 공유한다.
@@ -42,7 +50,7 @@ export const useMyPerfume = () => {
     isPending: isToggleOwnedPending,
     variables: togglingPerfumeId,
   } = useMutation({
-    mutationFn: async (perfumeId: number) => {
+    mutationFn: async (perfumeId: number): Promise<ToggleOwnedResultT> => {
       /**
        * 렌더 시점 스냅샷이 아니라 최신 캐시로 방향을 정한다.
        * 다른 화면에서 바뀐 결과가 이미 반영돼 있을 수 있기 때문이다.
@@ -54,12 +62,30 @@ export const useMyPerfume = () => {
 
       if (owned) {
         await deleteMyPerfume(perfumeId);
-        return;
+        return { action: "removed", perfumeId };
       }
-      await postMyPerfume({ perfume_id: perfumeId });
+      const myPerfume = await postMyPerfume({ perfume_id: perfumeId });
+      return { action: "added", perfumeId, myPerfume };
+    },
+    // mutation이 끝나는 즉시 캐시를 직접 갱신해, isToggleOwnedPending이 풀리는 시점과
+    // 목록 리페치가 끝나는 시점 사이의 공백에서 버튼이 잠깐 되돌아가는 깜빡임을 없앤다.
+    onSuccess: (result) => {
+      queryClient.setQueryData<GetMyPerfumesResponseT>(MY_PERFUMES_KEY, (prev) => {
+        if (!prev) return prev;
+        if (result.action === "removed") {
+          return {
+            ...prev,
+            results: prev.results.filter(
+              (myPerfume) => myPerfume.perfume_id !== result.perfumeId,
+            ),
+          };
+        }
+        return { ...prev, results: [...prev.results, result.myPerfume] };
+      });
     },
     onSettled: (_data, _error, perfumeId) => {
       inFlightPerfumeIds.delete(perfumeId);
+      // 서버 기준으로 최종 보정 — 위 setQueryData는 즉시 반영용, 이건 정합성 확인용
       queryClient.invalidateQueries({ queryKey: MY_PERFUMES_KEY });
     },
   });
