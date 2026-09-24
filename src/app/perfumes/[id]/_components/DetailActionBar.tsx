@@ -9,7 +9,7 @@ type DetailActionBarProps = {
 
 function DetailActionBar({ perfumeId }: DetailActionBarProps) {
   const { owned, toggleOwned } = useAppStore();
-  const { isLiked: getIsLiked, toggleLikeMutation } = usePerfumeLike();
+  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
 
   const isLiked = getIsLiked(perfumeId);
   const isOwned = owned.includes(perfumeId);
@@ -22,9 +22,10 @@ function DetailActionBar({ perfumeId }: DetailActionBarProps) {
       <button
         type="button"
         onClick={handleToggleLike}
+        disabled={!canToggleLike}
         aria-label="좋아요"
         aria-pressed={isLiked}
-        className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border ${
+        className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border transition-opacity disabled:cursor-default disabled:opacity-50 ${
           isLiked ? "border-rose bg-rose-light" : "border-border bg-transparent"
         }`}
       >

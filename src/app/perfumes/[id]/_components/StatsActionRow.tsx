@@ -15,7 +15,7 @@ type StatsActionRowProps = {
 
 function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProps) {
   const { owned, toggleOwned } = useAppStore();
-  const { isLiked: getIsLiked, toggleLikeMutation } = usePerfumeLike();
+  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
   const [isPriceSheetOpen, setIsPriceSheetOpen] = useState(false);
 
   const isLiked = getIsLiked(perfumeId);
@@ -62,8 +62,9 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
         <button
           type="button"
           onClick={handleToggleLike}
+          disabled={!canToggleLike}
           aria-pressed={isLiked}
-          className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent"
+          className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent transition-opacity disabled:cursor-default disabled:opacity-50"
         >
           <svg
             width="15"
