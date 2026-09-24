@@ -21,6 +21,21 @@ export const SEARCH_FAMILY_TO_CATEGORY = {
 
 export type SearchNonAllFamilyFilterT = keyof typeof SEARCH_FAMILY_TO_CATEGORY;
 
+const CATEGORY_TO_SEARCH_FAMILY = Object.fromEntries(
+  Object.entries(SEARCH_FAMILY_TO_CATEGORY).map(([label, category]) => [category, label]),
+) as Record<string, SearchNonAllFamilyFilterT>;
+
+/** 매거진 등에서 /search?category=floral,woody로 들어올 때 초기 필터로 변환한다 */
+export const parseCategoryParam = (
+  categoryParam: string | null,
+): SearchNonAllFamilyFilterT[] => {
+  if (!categoryParam) return [];
+  return categoryParam
+    .split(",")
+    .map((category) => CATEGORY_TO_SEARCH_FAMILY[category.trim()])
+    .filter((label): label is SearchNonAllFamilyFilterT => Boolean(label));
+};
+
 export const SEARCH_SORT_OPTIONS = ["인기순", "최신순", "가격순"] as const;
 
 export type SearchSortOptionT = (typeof SEARCH_SORT_OPTIONS)[number];
