@@ -50,6 +50,11 @@ export const API_ENDPOINTS = {
     popular: "/brands/popular",
   },
 
+  // 리뷰 수정·삭제는 향수 경로가 아니라 /reviews/{review_id}로 따로 나뉘어 있다
+  reviews: {
+    detail: (reviewId: number) => `/reviews/${reviewId}`,
+  },
+
   categories: "/categories",
 
   recommendations: "/recommendations",

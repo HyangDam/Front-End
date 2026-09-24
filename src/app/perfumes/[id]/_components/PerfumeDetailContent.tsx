@@ -1,8 +1,13 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { ApiError } from "@/apis/apiError";
+import { useMyPerfume } from "@/hooks/useMyPerfume";
+import { usePerfumeLike } from "@/hooks/usePerfumeLike";
+import type { PerfumeReviewT } from "@/types/perfume";
 
 import AccordBars from "./AccordBars";
 import DetailActionBar from "./DetailActionBar";
@@ -10,9 +15,16 @@ import DetailHeader from "./DetailHeader";
 import DetailHeroImage from "./DetailHeroImage";
 import FamilyBadges from "./FamilyBadges";
 import NoteSection from "./NoteSection";
+import ReviewFormSheet from "./ReviewFormSheet";
 import ReviewList from "./ReviewList";
 import StatsActionRow from "./StatsActionRow";
-import { useGetPerfume, useGetPerfumeReviews } from "../_apis/perfume";
+import {
+  useDeleteReview,
+  useGetPerfume,
+  useGetPerfumeReviews,
+  usePatchReview,
+  usePostReview,
+} from "../_apis/perfume";
 import { getNoteColorMap } from "../_utils/getNoteColorMap";
 import { toFallbackNotes } from "../_utils/toFallbackNotes";
 
@@ -23,6 +35,33 @@ type PerfumeDetailContentProps = {
 function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
   const { perfumeData, isPerfumeLoading, perfumeError } = useGetPerfume(perfumeId);
   const { perfumeReviewsData } = useGetPerfumeReviews(perfumeId);
+
+  const [isReviewSheetOpen, setIsReviewSheetOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState<PerfumeReviewT | null>(null);
+
+  const { postReviewMutation, isPostReviewPending, postReviewError } =
+    usePostReview(perfumeId);
+  const { patchReviewMutation, isPatchReviewPending, patchReviewError } =
+    usePatchReview(perfumeId);
+  const { deleteReviewMutation, isDeleteReviewPending } = useDeleteReview(perfumeId);
+
+  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
+  const {
+    isOwned: getIsOwned,
+    toggleOwnedMutation,
+    canToggleOwned,
+    isToggleOwnedPending,
+  } = useMyPerfume();
+
+  const queryClient = useQueryClient();
+  const wasTogglingOwnedRef = useRef(false);
+  useEffect(() => {
+    // 향수장 목록만 갱신되고 상세의 can_write_review·is_owned는 그대로 남아있어 직접 새로고침한다
+    if (wasTogglingOwnedRef.current && !isToggleOwnedPending) {
+      queryClient.invalidateQueries({ queryKey: ["perfume", perfumeId] });
+    }
+    wasTogglingOwnedRef.current = isToggleOwnedPending;
+  }, [isToggleOwnedPending, perfumeId, queryClient]);
 
   if (perfumeError instanceof ApiError && perfumeError.status === 404) notFound();
 
@@ -60,6 +99,41 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
       notePyramid.base.length > 0),
   );
 
+  const handleWriteReview = () => {
+    setEditingReview(null);
+    setIsReviewSheetOpen(true);
+  };
+
+  const handleEditReview = (review: PerfumeReviewT) => {
+    setEditingReview(review);
+    setIsReviewSheetOpen(true);
+  };
+
+  const handleSubmitReview = (values: { rating: number; content: string }) => {
+    if (editingReview) {
+      patchReviewMutation(
+        { reviewId: editingReview.review_id, body: values },
+        { onSuccess: () => setIsReviewSheetOpen(false) },
+      );
+    } else {
+      postReviewMutation(values, { onSuccess: () => setIsReviewSheetOpen(false) });
+    }
+  };
+
+  const reviewError = editingReview ? patchReviewError : postReviewError;
+
+  const isLiked = getIsLiked(perfumeId);
+  const isOwned = getIsOwned(perfumeId);
+
+  // 좋아요·향수장 목록 갱신 전에도 개수가 바로 바뀐 것처럼 보이도록 상세 조회 시점 값과 비교해 보정한다
+  const wasLiked = perfumeData.is_liked ?? false;
+  const likeCount = perfumeData.like_count + (Number(isLiked) - Number(wasLiked));
+  const wasOwned = perfumeData.is_owned ?? false;
+  const ownedCount = perfumeData.owned_count + (Number(isOwned) - Number(wasOwned));
+
+  const handleToggleLike = () => toggleLikeMutation(perfumeId);
+  const handleToggleOwned = () => toggleOwnedMutation(perfumeId);
+
   return (
     <div className="flex h-full flex-col bg-paper">
       <DetailHeader />
@@ -82,11 +156,16 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
 
         <FamilyBadges accords={accordBars} />
 
-        {/* 좋아요·향수장 보유 API는 인증 처리 확인 후 2차 연동 예정 — 지금은 로컬 상태만 반영 */}
         <StatsActionRow
           perfumeId={perfumeId}
-          ownedCount={perfumeData.owned_count}
-          likeCount={perfumeData.like_count}
+          ownedCount={ownedCount}
+          likeCount={likeCount}
+          isOwned={isOwned}
+          isLiked={isLiked}
+          isLikeDisabled={!canToggleLike}
+          isOwnedDisabled={!canToggleOwned}
+          onToggleOwned={handleToggleOwned}
+          onToggleLike={handleToggleLike}
         />
 
         <AccordBars accords={accordBars} />
@@ -119,10 +198,38 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           )}
         </div>
 
-        <ReviewList reviews={perfumeReviewsData?.results ?? []} />
+        <ReviewList
+          reviews={perfumeReviewsData?.results ?? []}
+          canWriteReview={perfumeData.can_write_review}
+          isDeletingReview={isDeleteReviewPending}
+          onWriteReview={handleWriteReview}
+          onEditReview={handleEditReview}
+          onDeleteReview={(reviewId, onSuccess) =>
+            deleteReviewMutation(reviewId, { onSuccess })
+          }
+        />
       </main>
 
-      <DetailActionBar perfumeId={perfumeId} />
+      <DetailActionBar
+        isOwned={isOwned}
+        isLiked={isLiked}
+        isLikeDisabled={!canToggleLike}
+        isOwnedDisabled={!canToggleOwned}
+        onToggleOwned={handleToggleOwned}
+        onToggleLike={handleToggleLike}
+      />
+
+      {isReviewSheetOpen && (
+        <ReviewFormSheet
+          isEditing={editingReview !== null}
+          initialRating={editingReview?.rating}
+          initialContent={editingReview?.content}
+          isSubmitting={editingReview ? isPatchReviewPending : isPostReviewPending}
+          errorMessage={reviewError instanceof Error ? reviewError.message : undefined}
+          onSubmit={handleSubmitReview}
+          onClose={() => setIsReviewSheetOpen(false)}
+        />
+      )}
     </div>
   );
 }

@@ -2,35 +2,40 @@
 
 import { useState } from "react";
 
-import { useMyPerfume } from "@/hooks/useMyPerfume";
-import { usePerfumeLike } from "@/hooks/usePerfumeLike";
-
 import PriceComparisonSheet from "./PriceComparisonSheet";
 
 type StatsActionRowProps = {
   perfumeId: number;
   ownedCount: number;
   likeCount: number;
+  isOwned: boolean;
+  isLiked: boolean;
+  isLikeDisabled?: boolean;
+  isOwnedDisabled?: boolean;
+  onToggleOwned: () => void;
+  onToggleLike: () => void;
 };
 
-function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProps) {
-  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
-  const { isOwned: getIsOwned, toggleOwnedMutation, canToggleOwned } = useMyPerfume();
+function StatsActionRow({
+  perfumeId,
+  ownedCount,
+  likeCount,
+  isOwned,
+  isLiked,
+  isLikeDisabled = false,
+  isOwnedDisabled = false,
+  onToggleOwned,
+  onToggleLike,
+}: StatsActionRowProps) {
   const [isPriceSheetOpen, setIsPriceSheetOpen] = useState(false);
-
-  const isLiked = getIsLiked(perfumeId);
-  const isOwned = getIsOwned(perfumeId);
-
-  const handleToggleOwned = () => toggleOwnedMutation(perfumeId);
-  const handleToggleLike = () => toggleLikeMutation(perfumeId);
 
   return (
     <div className="border-b border-border px-[22px] py-3.5">
       <div className="mb-4 flex items-center justify-center gap-5">
         <button
           type="button"
-          onClick={handleToggleOwned}
-          disabled={!canToggleOwned}
+          onClick={onToggleOwned}
+          disabled={isOwnedDisabled}
           aria-pressed={isOwned}
           className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent transition-opacity disabled:cursor-default disabled:opacity-50"
         >
@@ -56,14 +61,14 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
           <span
             className={`font-sans text-[13px] ${isOwned ? "text-sage" : "text-muted"}`}
           >
-            보유 {ownedCount + (isOwned ? 1 : 0)}
+            보유 {ownedCount}
           </span>
         </button>
         <div className="h-4 w-px bg-border" />
         <button
           type="button"
-          onClick={handleToggleLike}
-          disabled={!canToggleLike}
+          onClick={onToggleLike}
+          disabled={isLikeDisabled}
           aria-pressed={isLiked}
           className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent transition-opacity disabled:cursor-default disabled:opacity-50"
         >
@@ -80,7 +85,7 @@ function StatsActionRow({ perfumeId, ownedCount, likeCount }: StatsActionRowProp
           <span
             className={`font-sans text-[13px] ${isLiked ? "text-rose" : "text-muted"}`}
           >
-            좋아요 {likeCount + (isLiked ? 1 : 0)}
+            좋아요 {likeCount}
           </span>
         </button>
       </div>

@@ -1,28 +1,28 @@
 "use client";
 
-import { useMyPerfume } from "@/hooks/useMyPerfume";
-import { usePerfumeLike } from "@/hooks/usePerfumeLike";
-
 type DetailActionBarProps = {
-  perfumeId: number;
+  isOwned: boolean;
+  isLiked: boolean;
+  isLikeDisabled?: boolean;
+  isOwnedDisabled?: boolean;
+  onToggleOwned: () => void;
+  onToggleLike: () => void;
 };
 
-function DetailActionBar({ perfumeId }: DetailActionBarProps) {
-  const { isLiked: getIsLiked, toggleLikeMutation, canToggleLike } = usePerfumeLike();
-  const { isOwned: getIsOwned, toggleOwnedMutation, canToggleOwned } = useMyPerfume();
-
-  const isLiked = getIsLiked(perfumeId);
-  const isOwned = getIsOwned(perfumeId);
-
-  const handleToggleLike = () => toggleLikeMutation(perfumeId);
-  const handleToggleOwned = () => toggleOwnedMutation(perfumeId);
-
+function DetailActionBar({
+  isOwned,
+  isLiked,
+  isLikeDisabled = false,
+  isOwnedDisabled = false,
+  onToggleOwned,
+  onToggleLike,
+}: DetailActionBarProps) {
   return (
     <div className="flex flex-shrink-0 gap-2.5 border-t border-border bg-paper px-4 py-[18px]">
       <button
         type="button"
-        onClick={handleToggleLike}
-        disabled={!canToggleLike}
+        onClick={onToggleLike}
+        disabled={isLikeDisabled}
         aria-label="좋아요"
         aria-pressed={isLiked}
         className={`flex h-[46px] w-[46px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border transition-opacity disabled:cursor-default disabled:opacity-50 ${
@@ -42,8 +42,8 @@ function DetailActionBar({ perfumeId }: DetailActionBarProps) {
       </button>
       <button
         type="button"
-        onClick={handleToggleOwned}
-        disabled={!canToggleOwned}
+        onClick={onToggleOwned}
+        disabled={isOwnedDisabled}
         aria-pressed={isOwned}
         className={`h-[46px] flex-1 cursor-pointer rounded-[23px] font-sans text-[13px] font-semibold transition-opacity disabled:cursor-default disabled:opacity-50 ${
           isOwned
