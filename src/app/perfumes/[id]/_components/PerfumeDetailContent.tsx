@@ -8,6 +8,7 @@ import { ApiError } from "@/apis/apiError";
 import { useMyPerfume } from "@/hooks/useMyPerfume";
 import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 import type { PerfumeReviewT } from "@/types/perfume";
+import { getPerfumeDisplay } from "@/utils/perfumeDisplay";
 
 import AccordBars from "./AccordBars";
 import DetailActionBar from "./DetailActionBar";
@@ -89,6 +90,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
     );
   }
 
+  const display = getPerfumeDisplay(perfumeData);
   const accordBars = perfumeData.note_visualization?.accord_bars ?? [];
   const noteColorMap = getNoteColorMap(accordBars);
   const notePyramid = perfumeData.note_visualization?.note_pyramid;
@@ -141,16 +143,16 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
       <main className="flex-1 overflow-y-auto">
         <div className="border-b border-border px-[22px] py-4">
           <h1 className="mb-1 text-center font-serif text-xl text-charcoal">
-            {perfumeData.name}
+            {display.name}
           </h1>
           <div className="text-center font-mono text-[11px] tracking-[1.5px] text-muted">
-            {perfumeData.brand}
+            {display.brand}
           </div>
         </div>
 
         <DetailHeroImage
-          name={perfumeData.name}
-          brand={perfumeData.brand}
+          name={display.name}
+          brand={display.brand}
           imageUrl={perfumeData.image_url}
         />
 
@@ -192,7 +194,7 @@ function PerfumeDetailContent({ perfumeId }: PerfumeDetailContentProps) {
           ) : (
             <NoteSection
               label="NOTES"
-              notes={toFallbackNotes(perfumeData.notes)}
+              notes={toFallbackNotes(display.notes ?? perfumeData.notes)}
               noteColorMap={noteColorMap}
             />
           )}

@@ -7,6 +7,7 @@ import { useState } from "react";
 import PerfumeCard from "@/components/perfume-card";
 import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 import type { PerfumeSummaryT, PerfumeT } from "@/types/perfume";
+import { getPerfumeDisplay } from "@/utils/perfumeDisplay";
 
 import CategoryFilterSheet from "./CategoryFilterSheet";
 import SearchBar from "./SearchBar";
@@ -25,14 +26,17 @@ import type {
   SearchSortOptionT,
 } from "../_consts/search.const";
 
-const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => ({
-  id: item.perfume_id,
-  name: item.name,
-  brand: item.brand,
-  brandKr: item.brand,
-  price: "",
-  img: item.image_url ?? undefined,
-});
+const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => {
+  const display = getPerfumeDisplay(item);
+  return {
+    id: item.perfume_id,
+    name: display.name,
+    brand: display.brand,
+    brandKr: display.brand,
+    price: "",
+    img: item.image_url ?? undefined,
+  };
+};
 
 function SearchContent() {
   const searchParams = useSearchParams();

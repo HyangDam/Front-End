@@ -91,6 +91,10 @@ export type PerfumeDetailT = {
   released_at: string | null;
   category: string;
   categories: string[];
+  /** 서버가 한글 표기를 따로 내려주는 필드. 노트는 이쪽만 한글이라 우선 사용한다 */
+  display_name?: string | null;
+  display_brand?: string | null;
+  display_notes?: string | null;
   // 배포 서버에 아직 데이터/필드가 채워지지 않아 응답에서 빠질 수 있음
   description_ko?: string;
   note_visualization?: PerfumeNoteVisualizationT;
