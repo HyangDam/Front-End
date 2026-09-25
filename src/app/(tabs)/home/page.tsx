@@ -28,9 +28,9 @@ export default function HomePage() {
 
       <WeeklyPopularSection />
 
-      <section className="px-3.5 pb-6 pt-[26px]">
+      <section className="pb-6 pt-[26px]">
         <SectionHeader title="새로 나온 향수" subtitle="NEW IN" />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 px-3.5">
           {HOME_PERFUMES.slice(0, 6).map((perfume) => (
             <Link key={perfume.id} href={`/perfumes/${perfume.id}`}>
               <PerfumeCard perfume={perfume} variant="compact" />
