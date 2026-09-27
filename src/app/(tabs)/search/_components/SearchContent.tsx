@@ -19,7 +19,6 @@ import {
   SEARCH_FAMILY_TO_CATEGORY,
   SEARCH_SORT_OPTIONS,
   SEARCH_SORT_TO_PARAM,
-  SEARCH_UNSUPPORTED_SORTS,
 } from "../_consts/search.const";
 import type {
   SearchNonAllFamilyFilterT,
@@ -112,12 +111,7 @@ function SearchContent() {
             </p>
           )}
         </div>
-        <SortTabs
-          resultCount={total}
-          sort={sort}
-          onChange={setSort}
-          disabledOptions={SEARCH_UNSUPPORTED_SORTS}
-        />
+        <SortTabs resultCount={total} sort={sort} onChange={setSort} />
       </div>
 
       <div className="px-3.5 py-3">
