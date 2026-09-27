@@ -9,8 +9,14 @@ export type PostRecommendationsRequestT = {
   top_n?: number;
 };
 
+/** rank·score는 추천 결과에만 있는 필드라 공용 PerfumeSummaryT에는 안 넣는다 */
+export type PerfumeRecommendationT = PerfumeSummaryT & {
+  rank: number;
+  score: number;
+};
+
 export type PostRecommendationsResponseT = {
-  results: PerfumeSummaryT[];
+  results: PerfumeRecommendationT[];
 };
 
 export const postRecommendations = (body: PostRecommendationsRequestT) =>

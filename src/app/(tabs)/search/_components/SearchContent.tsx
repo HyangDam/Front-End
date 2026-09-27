@@ -7,6 +7,7 @@ import { useState } from "react";
 import PerfumeCard from "@/components/perfume-card";
 import { usePerfumeLike } from "@/hooks/usePerfumeLike";
 import type { PerfumeSummaryT, PerfumeT } from "@/types/perfume";
+import { getPerfumeDisplay } from "@/utils/perfumeDisplay";
 
 import CategoryFilterSheet from "./CategoryFilterSheet";
 import SearchBar from "./SearchBar";
@@ -18,21 +19,23 @@ import {
   SEARCH_FAMILY_TO_CATEGORY,
   SEARCH_SORT_OPTIONS,
   SEARCH_SORT_TO_PARAM,
-  SEARCH_UNSUPPORTED_SORTS,
 } from "../_consts/search.const";
 import type {
   SearchNonAllFamilyFilterT,
   SearchSortOptionT,
 } from "../_consts/search.const";
 
-const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => ({
-  id: item.perfume_id,
-  name: item.name,
-  brand: item.brand,
-  brandKr: item.brand,
-  price: "",
-  img: item.image_url ?? undefined,
-});
+const toPerfumeCardItem = (item: PerfumeSummaryT): PerfumeT => {
+  const display = getPerfumeDisplay(item);
+  return {
+    id: item.perfume_id,
+    name: display.name,
+    brand: display.brand,
+    brandKr: display.brand,
+    price: "",
+    img: item.image_url ?? undefined,
+  };
+};
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -108,12 +111,7 @@ function SearchContent() {
             </p>
           )}
         </div>
-        <SortTabs
-          resultCount={total}
-          sort={sort}
-          onChange={setSort}
-          disabledOptions={SEARCH_UNSUPPORTED_SORTS}
-        />
+        <SortTabs resultCount={total} sort={sort} onChange={setSort} />
       </div>
 
       <div className="px-3.5 py-3">
