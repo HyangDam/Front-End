@@ -23,10 +23,29 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * FastAPI는 입력값 검증에 실패하면 detail을 배열로 내려준다.
+ * [{ loc, msg, type }, ...] 형태라, 첫 항목의 msg가 사용자에게 보여줄 이유다.
+ */
+const getValidationMessage = (detail: unknown) => {
+  if (!Array.isArray(detail)) return null;
+
+  const firstMessage = detail.find(
+    (item) => isRecord(item) && typeof item.msg === "string",
+  );
+  return isRecord(firstMessage) && typeof firstMessage.msg === "string"
+    ? firstMessage.msg
+    : null;
+};
+
 // 팀 규약은 detail, 일부 명세는 message, FastAPI 기본 오류도 detail을 쓴다
 const getErrorMessage = (body: unknown, status: number) => {
   if (isRecord(body)) {
     if (typeof body.detail === "string") return body.detail;
+
+    const validationMessage = getValidationMessage(body.detail);
+    if (validationMessage) return validationMessage;
+
     if (typeof body.message === "string") return body.message;
   }
   if (status === 401) return "로그인이 필요해요.";
