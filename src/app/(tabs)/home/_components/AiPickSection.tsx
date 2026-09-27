@@ -6,6 +6,7 @@ import PerfumeCard from "@/components/perfume-card";
 
 import SectionHeader from "./SectionHeader";
 import { useGetAiPickPerfumes } from "../_hooks/useGetAiPickPerfumes";
+import { getMatchLabel } from "../_utils/getMatchLabel";
 import { toPerfumeCardItem } from "../_utils/toPerfumeCardItem";
 
 function AiPickSection() {
@@ -23,8 +24,15 @@ function AiPickSection() {
           aiPickPerfumes.map((item) => {
             const perfume = toPerfumeCardItem(item);
             return (
-              <Link key={perfume.id} href={`/perfumes/${perfume.id}`}>
+              <Link
+                key={perfume.id}
+                href={`/perfumes/${perfume.id}`}
+                className="w-[116px] flex-shrink-0"
+              >
                 <PerfumeCard perfume={perfume} variant="hscroll" />
+                <p className="mt-1 line-clamp-2 h-[26px] px-0.5 font-sans text-[10px] leading-[1.3] text-muted">
+                  {getMatchLabel(item.score)}
+                </p>
               </Link>
             );
           })
