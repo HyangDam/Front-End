@@ -71,7 +71,7 @@ function CategoryFilterSheet({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end">
+    <div className="fixed inset-0 z-50 flex items-end justify-center">
       <button
         type="button"
         aria-label="닫기"
@@ -84,7 +84,7 @@ function CategoryFilterSheet({
         role="dialog"
         aria-modal="true"
         aria-label="향 계열 필터"
-        className="relative w-full rounded-t-2xl border-t border-border bg-paper px-5 pb-6 pt-5"
+        className="relative w-full max-w-md rounded-t-2xl border-t border-border bg-paper px-5 pb-6 pt-5"
       >
         <div className="mb-1.5 flex items-baseline justify-between">
           <h2 className="font-serif text-base text-charcoal">향 계열 필터</h2>
